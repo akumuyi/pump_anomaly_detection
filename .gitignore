@@ -1,1 +1,4 @@
-.venv
+.venv/
+data/pump
+data/test
+data/train
