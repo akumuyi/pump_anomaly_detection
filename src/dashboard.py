@@ -21,7 +21,7 @@ model = PumpAnomalyDetector()
 preprocessor = AudioPreprocessor()
 
 # FastAPI endpoint
-API_URL = "http://localhost:8000"
+API_URL = os.environ.get('API_URL', 'http://localhost:8000')
 
 def get_model_uptime():
     """Calculate model uptime based on file modification time."""
