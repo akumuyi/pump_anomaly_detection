@@ -39,6 +39,6 @@ services:
       - key: ENVIRONMENT
         value: production
       - key: API_URL
-        value: https://pump-anomaly-api.onrender.com  # This will be the URL of your FastAPI service
+        value: https://pump-anomaly-api.onrender.com  # This will be the URL of the FastAPI service
       - key: API_KEY
         sync: false  # Will be set manually in Render dashboard
