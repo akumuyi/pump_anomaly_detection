@@ -1,0 +1,24 @@
+services:
+  # FastAPI Service
+  - type: web
+    name: pump-anomaly-api
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn src.prediction:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.5
+
+  # Streamlit Dashboard Service
+  - type: web
+    name: pump-anomaly-dashboard
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: streamlit run src/dashboard.py --server.port $PORT --server.address 0.0.0.0
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.5
+      - key: API_URL
+        value: https://pump-anomaly-api.onrender.com  # This will be the URL of your FastAPI service
