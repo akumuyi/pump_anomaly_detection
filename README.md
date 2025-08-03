@@ -188,8 +188,6 @@ The preprocessing pipeline extracts 73 features from each 10-second audio record
    ```bash
    # Create .env file in project root
    ENVIRONMENT=development
-   API_URL=http://localhost:8000  # Local development API URL
-   CLOUD_API_URL=https://your-cloud-api-url  # Production API URL (set in cloud environment)
    API_KEY=your_secure_api_key_here
    SECRET_KEY=your_jwt_secret_key_here
    AWS_ACCESS_KEY_ID=your_aws_access_key
@@ -225,8 +223,6 @@ The preprocessing pipeline extracts 73 features from each 10-second audio record
    ```
    ENVIRONMENT=production
    PYTHON_VERSION=3.13.5
-   API_URL=https://your-cloud-api-url  # Production API URL
-   CLOUD_API_URL=https://your-cloud-api-url  # Same as API_URL in production
    API_KEY=your_secure_api_key
    SECRET_KEY=your_jwt_secret_key
    AWS_ACCESS_KEY_ID=your_aws_access_key
