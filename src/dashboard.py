@@ -22,6 +22,8 @@ preprocessor = AudioPreprocessor()
 
 # FastAPI endpoint
 API_URL = os.environ.get('API_URL', 'http://localhost:8000')
+API_KEY = os.environ.get('API_KEY', None)
+HEADERS = {"X-API-Key": API_KEY} if API_KEY else {}
 
 def get_model_uptime():
     """Calculate model uptime based on file modification time."""
@@ -80,7 +82,7 @@ def plot_metrics_history():
     
     # Get latest metrics from API
     try:
-        response = requests.get(f"{API_URL}/evaluate/")
+        response = requests.get(f"{API_URL}/evaluate/", headers=HEADERS, timeout=15)
         if response.status_code == 200:
             latest_eval = response.json()
             if 'classification_report' in latest_eval:
@@ -167,12 +169,15 @@ if page == "Model Monitoring":
     
     # Get model info
     try:
-        response = requests.get(f"{API_URL}/model-info/")
-        model_info = response.json()
-        col2.metric("Model Type", model_info['model_type'])
-        col3.metric("Model Status", "Active" if model_info['is_trained'] else "Not Trained")
-    except:
-        st.error("Could not connect to the API")
+        response = requests.get(f"{API_URL}/model-info/", headers=HEADERS, timeout=10)
+        if response.status_code == 200:
+            model_info = response.json()
+            col2.metric("Model Type", model_info['model_type'])
+            col3.metric("Model Status", "Active" if model_info['is_trained'] else "Not Trained")
+        else:
+            st.error(f"API Error: {response.json().get('detail', 'Unknown error')}")
+    except Exception as e:
+        st.error(f"Could not connect to the API: {str(e)}")
     
     # Performance metrics over time
     st.subheader("Performance Metrics History")
@@ -183,7 +188,7 @@ if page == "Model Monitoring":
     if hasattr(model, 'model') and model.model is not None:
         st.subheader("Latest Model Evaluation")
         try:
-            response = requests.get(f"{API_URL}/evaluate/")
+            response = requests.get(f"{API_URL}/evaluate/", headers=HEADERS, timeout=15)
             if response.status_code == 200:
                 latest_eval = response.json()
                 
@@ -403,7 +408,7 @@ elif page == "Predictions":
         try:
             with open(temp_path, 'rb') as file_handle:
                 files = {'file': ('audio.wav', file_handle.read(), 'audio/wav')}
-                response = requests.post(f"{API_URL}/predict/", files=files)
+                response = requests.post(f"{API_URL}/predict/", files=files, headers=HEADERS, timeout=30)
             
             prediction = response.json()
             
@@ -514,7 +519,7 @@ elif page == "Training":
                 current_step += 1
                 progress_bar.progress(current_step / total_steps)
                 
-                response = requests.post(f"{API_URL}/retrain/", files=files)
+                response = requests.post(f"{API_URL}/retrain/", files=files, headers=HEADERS, timeout=120)
                 result = response.json()
                 
                 if response.status_code == 200:
