@@ -15,6 +15,7 @@ import librosa.display
 import matplotlib.pyplot as plt
 from io import BytesIO
 import base64
+import boto3
 
 # Initialize model and preprocessor
 model = PumpAnomalyDetector()
@@ -24,6 +25,32 @@ preprocessor = AudioPreprocessor()
 API_URL = os.environ.get('API_URL', 'http://localhost:8000')
 API_KEY = os.environ.get('API_KEY', None)
 HEADERS = {"X-API-Key": API_KEY} if API_KEY else {}
+
+# Storage configuration
+STORAGE_TYPE = os.environ.get('STORAGE_TYPE', 'local')
+S3_BUCKET = os.environ.get('S3_BUCKET')
+AWS_REGION = os.environ.get('AWS_REGION', 'us-east-1')
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+
+s3_client = None
+if STORAGE_TYPE == 's3' and S3_BUCKET and AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY:
+    s3_client = boto3.client(
+        's3',
+        region_name=AWS_REGION,
+        aws_access_key_id=AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=AWS_SECRET_ACCESS_KEY
+    )
+
+def fetch_s3_file(s3_path, local_path):
+    if s3_client:
+        try:
+            s3_client.download_file(S3_BUCKET, s3_path, local_path)
+            return local_path
+        except Exception as e:
+            st.warning(f"Could not fetch {s3_path} from S3: {str(e)}")
+            return None
+    return None
 
 def get_model_uptime():
     """Calculate model uptime based on file modification time."""
@@ -71,13 +98,16 @@ def plot_feature_importance(feature_names, importance_values):
 
 def plot_metrics_history():
     """Plot historical model performance metrics."""
-    history_file = os.path.join('../data', 'metrics_history.csv')
-    
-    if not os.path.exists(history_file):
-        # Create empty history if file doesn't exist
+    if STORAGE_TYPE == 's3':
+        s3_metrics_path = 'metrics/metrics_history.csv'
+        local_metrics_path = '/tmp/metrics_history.csv'
+        metrics_file = fetch_s3_file(s3_metrics_path, local_metrics_path)
+    else:
+        metrics_file = os.path.join('../data', 'metrics_history.csv')
+    if not metrics_file or not os.path.exists(metrics_file):
         df = pd.DataFrame(columns=['timestamp', 'accuracy', 'precision', 'recall', 'f1'])
     else:
-        df = pd.read_csv(history_file)
+        df = pd.read_csv(metrics_file)
         df['timestamp'] = pd.to_datetime(df['timestamp'])
     
     # Get latest metrics from API
@@ -99,7 +129,7 @@ def plot_metrics_history():
                 if len(df) == 0 or not df.iloc[-1][1:].equals(pd.Series(latest_metrics)[1:]):
                     df = pd.concat([df, pd.DataFrame([latest_metrics])], ignore_index=True)
                     # Save updated history
-                    df.to_csv(history_file, index=False)
+                    df.to_csv(metrics_file, index=False)
     except Exception as e:
         st.warning(f"Could not update metrics history: {str(e)}")
     
@@ -231,12 +261,14 @@ if page == "Model Monitoring":
     
     # Feature Analysis Section
     st.header("Feature Analysis")
-    
-    # Load and prepare data
-    data_dir = '../data'
-    train_features = os.path.join(data_dir, 'train_features_augmented.csv')
-    
-    if os.path.exists(train_features):
+    if STORAGE_TYPE == 's3':
+        s3_train_path = 'data/train_features_augmented.csv'
+        local_train_path = '/tmp/train_features_augmented.csv'
+        train_features = fetch_s3_file(s3_train_path, local_train_path)
+    else:
+        data_dir = '../data'
+        train_features = os.path.join(data_dir, 'train_features_augmented.csv')
+    if train_features and os.path.exists(train_features):
         df = pd.read_csv(train_features)
         df['Status'] = df['label'].map({0: 'Normal', 1: 'Abnormal'})
         
