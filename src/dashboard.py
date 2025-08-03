@@ -35,8 +35,22 @@ import boto3
 model = PumpAnomalyDetector()
 preprocessor = AudioPreprocessor()
 
-# FastAPI endpoint
-API_URL = os.environ.get('API_URL', 'http://localhost:8000')
+# FastAPI endpoint configuration
+def get_api_url():
+    # Check environment-specific configuration first
+    env_url = os.environ.get('API_URL')
+    if env_url:
+        return env_url
+    
+    # For cloud deployment
+    cloud_url = os.environ.get('CLOUD_API_URL')
+    if cloud_url and os.environ.get('ENVIRONMENT') == 'production':
+        return cloud_url
+    
+    # Default to local development
+    return config.API_URL
+
+API_URL = get_api_url()
 API_KEY = os.environ.get('API_KEY', config.API_KEY)  # Get from config if not in env
 HEADERS = {"X-API-Key": API_KEY} if API_KEY else {}
 
@@ -213,15 +227,28 @@ if page == "Model Monitoring":
     
     # Get model info
     try:
-        response = requests.get(f"{API_URL}/model-info/", headers=HEADERS)
+        response = requests.get(f"{API_URL}/model-info/", headers=HEADERS, timeout=10)
         if response.status_code == 200:
             model_info = response.json()
             col2.metric("Model Type", model_info['model_type'])
             col3.metric("Model Status", "Active" if model_info['is_trained'] else "Not Trained")
+        elif response.status_code == 401:
+            st.error("🔐 Authentication Error: Invalid API key")
+        elif response.status_code == 404:
+            st.error("🔍 API endpoint not found. Please check the API URL.")
         else:
-            st.error(f"API Error: {response.json().get('detail', 'Unknown error')}")
+            try:
+                error_detail = response.json().get('detail', 'Unknown error')
+            except:
+                error_detail = f"HTTP {response.status_code}"
+            st.error(f"🚨 API Error: {error_detail}")
+    except requests.exceptions.ConnectionError:
+        st.error(f"🌐 Connection Error: Cannot reach API at {API_URL}")
+        st.info("💡 This usually means the API service is not running or the URL is incorrect.")
+    except requests.exceptions.Timeout:
+        st.error("⏱️ Timeout Error: API took too long to respond")
     except Exception as e:
-        st.error(f"Could not connect to the API: {str(e)}")
+        st.error(f"🔧 Unexpected Error: {str(e)}")
     
     # Performance metrics over time
     st.subheader("Performance Metrics History")

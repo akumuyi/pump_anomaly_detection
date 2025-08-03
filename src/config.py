@@ -22,6 +22,7 @@ IS_PRODUCTION = ENVIRONMENT == "production"
 
 # API Configuration
 API_URL = os.environ.get("API_URL", "http://localhost:8000")
+CLOUD_API_URL = os.environ.get("CLOUD_API_URL")  # Set this for cloud deployment
 API_KEY = os.environ.get("API_KEY", "your-dev-api-key")  # Used for API authentication
 
 # Storage Configuration
