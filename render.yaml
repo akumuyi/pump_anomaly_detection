@@ -9,6 +9,22 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.13.5
+      - key: ENVIRONMENT
+        value: production
+      - key: LOG_LEVEL
+        value: INFO
+      - key: STORAGE_TYPE
+        value: s3
+      - key: S3_BUCKET
+        value: anomaly-detection010
+      - key: AWS_ACCESS_KEY_ID
+        sync: false  # Set in Render dashboard for security
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false  # Set in Render dashboard for security
+      - key: SECRET_KEY
+        sync: false  # Set in Render dashboard for security
+      - key: API_KEY
+        sync: false  # Set in Render dashboard for security
 
   # Streamlit Dashboard Service
   - type: web
@@ -20,5 +36,9 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.13.5
+      - key: ENVIRONMENT
+        value: production
       - key: API_URL
         value: https://pump-anomaly-api.onrender.com  # This will be the URL of your FastAPI service
+      - key: API_KEY
+        sync: false  # Will be set manually in Render dashboard
