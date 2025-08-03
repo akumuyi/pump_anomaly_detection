@@ -42,7 +42,16 @@ ENVIRONMENT = os.environ.get('ENVIRONMENT', config.ENVIRONMENT)
 DEFAULT_API_URL = 'https://pump-anomaly-api.onrender.com' if ENVIRONMENT == 'production' else 'http://localhost:8000'
 API_URL = os.environ.get('API_URL', config.API_URL or DEFAULT_API_URL)
 API_KEY = os.environ.get('API_KEY', config.API_KEY)  # Get from config if not in env
-HEADERS = {"X-API-Key": API_KEY} if API_KEY else {}
+
+# Setup API authentication headers - FastAPI expects the API key in either:
+# 1. Header named 'X-API-Key' (custom header)
+# 2. Query parameter named 'api_key'
+# 3. Header named 'Authorization' with "Bearer {token}"
+# We'll use all three for maximum compatibility
+HEADERS = {}
+if API_KEY:
+    HEADERS["X-API-Key"] = API_KEY
+    HEADERS["Authorization"] = f"Bearer {API_KEY}"
 
 # API calling utility function with retries and error handling
 def call_api(method, endpoint, files=None, json_data=None, max_retries=3, timeout=10):
@@ -60,15 +69,20 @@ def call_api(method, endpoint, files=None, json_data=None, max_retries=3, timeou
     Returns:
         dict or None: JSON response or None if request failed
     """
+    # Ensure API key is sent both in headers and as a query parameter for maximum compatibility
     url = f"{API_URL}/{endpoint.lstrip('/')}"
+    params = {}
+    if API_KEY:
+        params['api_key'] = API_KEY
+    
     retry_delay = 1  # seconds
     
     for attempt in range(max_retries):
         try:
             if method.lower() == 'get':
-                response = requests.get(url, headers=HEADERS, timeout=timeout)
+                response = requests.get(url, headers=HEADERS, params=params, timeout=timeout)
             elif method.lower() == 'post':
-                response = requests.post(url, headers=HEADERS, files=files, json=json_data, timeout=timeout)
+                response = requests.post(url, headers=HEADERS, params=params, files=files, json=json_data, timeout=timeout)
             else:
                 raise ValueError(f"Unsupported method: {method}")
             
@@ -140,7 +154,12 @@ def check_api_health():
     try:
         # Use a direct request with minimal timeout for health checks
         url = f"{API_URL}/health/"
-        response = requests.get(url, headers=HEADERS, timeout=3)
+        # Setup params for API key authentication
+        params = {}
+        if API_KEY:
+            params['api_key'] = API_KEY
+            
+        response = requests.get(url, headers=HEADERS, params=params, timeout=3)
         if response.status_code == 200:
             return response.json()
         return None
@@ -309,7 +328,27 @@ page = st.sidebar.radio("Go to", ["Model Monitoring", "Predictions", "Training"]
 st.sidebar.markdown("### API Configuration")
 st.sidebar.text(f"Environment: {ENVIRONMENT}")
 st.sidebar.text(f"API URL: {API_URL}")
-st.sidebar.text(f"API Key: {'Set' if API_KEY else 'Not Set'}")
+
+# Show API key status but keep it secure
+if API_KEY:
+    masked_key = API_KEY[:4] + "*" * (len(API_KEY) - 4) if len(API_KEY) > 4 else "****"
+    st.sidebar.text(f"API Key: {masked_key}")
+    
+    # Add an expandable debug section for advanced users/admins
+    with st.sidebar.expander("🔧 Authentication Debug Info", expanded=False):
+        st.markdown("**Headers sent to API:**")
+        for key, value in HEADERS.items():
+            if key.lower() == "authorization":
+                st.code(f"{key}: Bearer ***")
+            elif key.lower() == "x-api-key":
+                st.code(f"{key}: ***")
+            else:
+                st.code(f"{key}: {value}")
+        st.markdown("**Also sending API key as:**")
+        st.code("api_key=*** (query parameter)")
+else:
+    st.sidebar.text("API Key: Not Set")
+    st.sidebar.warning("⚠️ API Key not configured. API calls will fail.")
 
 # Check API health
 health_status = check_api_health()
