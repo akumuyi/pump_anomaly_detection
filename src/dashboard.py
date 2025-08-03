@@ -44,41 +44,6 @@ API_URL = os.environ.get('API_URL', config.API_URL or DEFAULT_API_URL)
 API_KEY = os.environ.get('API_KEY', config.API_KEY)  # Get from config if not in env
 HEADERS = {"X-API-Key": API_KEY} if API_KEY else {}
 
-# API Health Check function
-def check_api_health():
-    """
-    Check if the API is online and functioning properly.
-    
-    Returns:
-        dict or None: API health status information
-    """
-    return call_api('get', '/health/', timeout=5, max_retries=1)
-
-# API configuration and status
-st.sidebar.markdown("### API Configuration")
-st.sidebar.text(f"Environment: {ENVIRONMENT}")
-st.sidebar.text(f"API URL: {API_URL}")
-st.sidebar.text(f"API Key: {'Set' if API_KEY else 'Not Set'}")
-
-# Check API health
-health_status = check_api_health()
-if health_status:
-    st.sidebar.markdown("🟢 **API Status: Online**")
-    st.sidebar.markdown(f"🔄 Model: {health_status['model_status']}")
-    st.sidebar.markdown(f"📊 Scaler: {health_status['scaler_status']}")
-else:
-    st.sidebar.markdown("🔴 **API Status: Offline**")
-    st.sidebar.markdown("⚠️ Unable to connect to API service")
-    if ENVIRONMENT != "production":
-        st.sidebar.markdown("""
-        💡 **Troubleshooting Tips:**
-        1. Make sure the API server is running
-        2. Check that the API URL is correct
-        3. Verify network connectivity
-        """)
-    else:
-        st.sidebar.markdown("The API service may be experiencing issues. Please try again later.")
-
 # API calling utility function with retries and error handling
 def call_api(method, endpoint, files=None, json_data=None, max_retries=3, timeout=10):
     """
@@ -163,6 +128,24 @@ def call_api(method, endpoint, files=None, json_data=None, max_retries=3, timeou
                 return None
     
     return None
+
+# API Health Check function
+def check_api_health():
+    """
+    Check if the API is online and functioning properly.
+    
+    Returns:
+        dict or None: API health status information
+    """
+    try:
+        # Use a direct request with minimal timeout for health checks
+        url = f"{API_URL}/health/"
+        response = requests.get(url, headers=HEADERS, timeout=3)
+        if response.status_code == 200:
+            return response.json()
+        return None
+    except Exception:
+        return None
 
 # Storage configuration
 STORAGE_TYPE = os.environ.get('STORAGE_TYPE', 'local')
@@ -321,6 +304,31 @@ st.title("Pump Anomaly Detection Dashboard")
 # Sidebar
 st.sidebar.title("Navigation")
 page = st.sidebar.radio("Go to", ["Model Monitoring", "Predictions", "Training"])
+
+# API configuration and status
+st.sidebar.markdown("### API Configuration")
+st.sidebar.text(f"Environment: {ENVIRONMENT}")
+st.sidebar.text(f"API URL: {API_URL}")
+st.sidebar.text(f"API Key: {'Set' if API_KEY else 'Not Set'}")
+
+# Check API health
+health_status = check_api_health()
+if health_status:
+    st.sidebar.markdown("🟢 **API Status: Online**")
+    st.sidebar.markdown(f"🔄 Model: {health_status['model_status']}")
+    st.sidebar.markdown(f"📊 Scaler: {health_status['scaler_status']}")
+else:
+    st.sidebar.markdown("🔴 **API Status: Offline**")
+    st.sidebar.markdown("⚠️ Unable to connect to API service")
+    if ENVIRONMENT != "production":
+        st.sidebar.markdown("""
+        💡 **Troubleshooting Tips:**
+        1. Make sure the API server is running
+        2. Check that the API URL is correct
+        3. Verify network connectivity
+        """)
+    else:
+        st.sidebar.markdown("The API service may be experiencing issues. Please try again later.")
 
 if page == "Model Monitoring":
     st.header("Model Monitoring")
