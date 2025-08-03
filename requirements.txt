@@ -116,7 +116,7 @@ networkx==3.5
 notebook==7.4.4
 notebook_shim==0.2.4
 numba==0.61.2
-numpy==2.3.2
+numpy==2.2.0
 overrides==7.7.0
 packaging==24.2
 pandas==2.3.1
@@ -164,7 +164,7 @@ rfc3987-syntax==1.1.0
 rpds-py==0.26.0
 rsa==4.7.2
 s3transfer==0.13.1
-scikit-learn==1.7.1
+scikit-learn==1.6.1
 scipy==1.16.1
 seaborn==0.13.2
 semantic-version==2.10.0
