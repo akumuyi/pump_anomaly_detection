@@ -16,15 +16,15 @@ services:
       - key: STORAGE_TYPE
         value: s3
       - key: S3_BUCKET
-        value: anomaly-detection010
+        sync: false  # Will be set manually in Render dashboard
       - key: AWS_ACCESS_KEY_ID
-        sync: false  # Set in Render dashboard for security
+        sync: false  # Will be set manually in Render dashboard
       - key: AWS_SECRET_ACCESS_KEY
-        sync: false  # Set in Render dashboard for security
+        sync: false  # Will be set manually in Render dashboard
       - key: SECRET_KEY
-        sync: false  # Set in Render dashboard for security
+        sync: false  # Will be set manually in Render dashboard
       - key: API_KEY
-        sync: false  # Set in Render dashboard for security
+        sync: false  # Will be set manually in Render dashboard
 
   # Streamlit Dashboard Service
   - type: web

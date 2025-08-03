@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, UploadFile, File, HTTPException, Depends
 from fastapi.responses import JSONResponse
 import uvicorn
 import shutil
@@ -9,6 +9,10 @@ import numpy as np
 import pandas as pd
 from preprocessing import AudioPreprocessor
 from model import PumpAnomalyDetector
+from security import verify_api_key
+from storage import ModelStorage
+from logging_config import api_logger
+import config
 
 app = FastAPI(
     title="Pump Anomaly Detection API",
@@ -16,12 +20,16 @@ app = FastAPI(
     version="1.0.0"
 )
 
+# Use ModelStorage for model persistence
+storage = ModelStorage()
+
 # Initialize preprocessor and model
 preprocessor = AudioPreprocessor()
 model = PumpAnomalyDetector()
 
 @app.post("/predict/")
-async def predict(file: UploadFile = File(...)):
+async def predict(file: UploadFile = File(...), api_key: str = Depends(verify_api_key)):
+    api_logger.info(f"Prediction request received: {file.filename}")
     """
     Predict if a pump sound is normal or abnormal.
     
@@ -70,7 +78,8 @@ async def predict(file: UploadFile = File(...)):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/retrain/")
-async def retrain(files: List[UploadFile] = File(...), labels: Optional[List[int]] = None):
+async def retrain(files: List[UploadFile] = File(...), labels: Optional[List[int]] = None, api_key: str = Depends(verify_api_key)):
+    api_logger.info(f"Retrain request received: {len(files)} files")
     """
     Retrain the model with new data.
     
@@ -133,6 +142,9 @@ async def retrain(files: List[UploadFile] = File(...), labels: Optional[List[int
         # Retrain model with validation set
         model.retrain(X_train, y_train, X_val, y_val, version="retrained")
         
+        # Save model using storage
+        storage.save_model(model.model, version="retrained")
+        
         # Evaluate new model on full dataset
         eval_results = model.evaluate(X_new_scaled, y_new)
         
@@ -154,7 +166,8 @@ async def retrain(files: List[UploadFile] = File(...), labels: Optional[List[int
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/model-info/")
-async def get_model_info():
+async def get_model_info(api_key: str = Depends(verify_api_key)):
+    api_logger.info("Model info requested")
     """Get information about the current model."""
     try:
         return JSONResponse({
@@ -167,7 +180,8 @@ async def get_model_info():
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/evaluate/")
-async def evaluate():
+async def evaluate(api_key: str = Depends(verify_api_key)):
+    api_logger.info("Model evaluation requested")
     """Get current model evaluation metrics."""
     try:
         if not hasattr(model, 'model') or model.model is None:
@@ -204,4 +218,4 @@ async def evaluate():
         raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run("prediction:app", host="0.0.0.0", port=8000, reload=True)
