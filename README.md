@@ -76,6 +76,8 @@ pump_anomaly_detection/
 - **Storage**: AWS S3, local file system
 - **Deployment**: Render (production), uvicorn (development)
 - **Authentication**: API Key, JWT tokens
+- **API Communication**: Requests with dynamic timeouts and exponential backoff retry logic
+- **Fault Tolerance**: Smart request handling with endpoint-specific timeouts
 - **Configuration**: Environment variables, pydantic
 - **Logging**: Python logging with rotating file handlers
 
@@ -120,6 +122,8 @@ The preprocessing pipeline extracts 73 features from each 10-second audio record
 - **Input**: .wav audio file (multipart/form-data)
 - **Output**: Prediction (normal/abnormal) with confidence score
 - **Authentication**: API Key required
+- **Processing Time**: 30-120 seconds depending on audio file size and complexity
+- **Timeout**: 120 seconds with automatic retry logic
 
 ### `/retrain/`
 - **Method**: POST
@@ -127,12 +131,16 @@ The preprocessing pipeline extracts 73 features from each 10-second audio record
 - **Input**: Multiple .wav files with labels (normal and abnormal samples)
 - **Output**: Training results, model performance metrics, and new model version
 - **Authentication**: API Key required
+- **Processing Time**: 1-5 minutes depending on dataset size
+- **Timeout**: 300 seconds (5 minutes) with automatic retry logic
 
 ### `/evaluate/`
 - **Method**: GET
 - **Purpose**: Get current model performance metrics
 - **Output**: Classification report, confusion matrix, and metrics history
 - **Authentication**: API Key required
+- **Processing Time**: 10-60 seconds depending on test dataset size
+- **Timeout**: 60 seconds with retry logic
 
 ### `/model-info/`
 - **Method**: GET

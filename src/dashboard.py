@@ -54,7 +54,7 @@ if API_KEY:
     HEADERS["Authorization"] = f"Bearer {API_KEY}"
 
 # API calling utility function with retries and error handling
-def call_api(method, endpoint, files=None, json_data=None, max_retries=3, timeout=10):
+def call_api(method, endpoint, files=None, json_data=None, max_retries=3, timeout=None):
     """
     Call API with retry logic and error handling.
     
@@ -64,7 +64,7 @@ def call_api(method, endpoint, files=None, json_data=None, max_retries=3, timeou
         files (dict, optional): Files for POST request
         json_data (dict, optional): JSON data for POST request
         max_retries (int): Maximum number of retry attempts
-        timeout (int): Request timeout in seconds
+        timeout (int, optional): Request timeout in seconds. If None, uses endpoint-appropriate defaults.
         
     Returns:
         dict or None: JSON response or None if request failed
@@ -74,6 +74,21 @@ def call_api(method, endpoint, files=None, json_data=None, max_retries=3, timeou
     params = {}
     if API_KEY:
         params['api_key'] = API_KEY
+    
+    # Set appropriate timeouts based on endpoint if none specified
+    if timeout is None:
+        if 'predict' in endpoint:
+            # Audio processing takes longer, especially for larger files
+            timeout = 60  # 60 seconds for prediction endpoints
+        elif 'retrain' in endpoint:
+            # Training can take a very long time
+            timeout = 300  # 5 minutes for retraining
+        elif 'evaluate' in endpoint:
+            # Model evaluation involves processing test datasets
+            timeout = 60  # 60 seconds for evaluation
+        else:
+            # Default for simpler endpoints
+            timeout = 15  # 15 seconds for other endpoints
     
     retry_delay = 1  # seconds
     
@@ -93,7 +108,11 @@ def call_api(method, endpoint, files=None, json_data=None, max_retries=3, timeou
             if attempt < max_retries - 1:
                 st.warning(f"⚠️ Connection failed (attempt {attempt+1}/{max_retries}). Retrying in {retry_delay}s...")
                 time.sleep(retry_delay)
-                retry_delay *= 2  # Exponential backoff
+                # Use longer retry delay for prediction endpoints
+                if 'predict' in endpoint or 'retrain' in endpoint:
+                    retry_delay *= 3  # More aggressive exponential backoff for compute-heavy operations
+                else:
+                    retry_delay *= 2  # Standard exponential backoff
             else:
                 if ENVIRONMENT != "production":
                     st.error(f"🌐 Connection Error: Cannot reach API at {API_URL}. Is the server running?")
@@ -103,11 +122,20 @@ def call_api(method, endpoint, files=None, json_data=None, max_retries=3, timeou
                 
         except Timeout:
             if attempt < max_retries - 1:
-                st.warning(f"⚠️ Request timed out (attempt {attempt+1}/{max_retries}). Retrying...")
+                # Add more information about timeouts for prediction endpoints
+                if 'predict' in endpoint:
+                    st.warning(f"⚠️ Prediction request timed out (attempt {attempt+1}/{max_retries}). Audio processing may take longer than expected. Retrying with longer timeout...")
+                    # Increase the timeout for the next attempt
+                    timeout *= 1.5
+                else:
+                    st.warning(f"⚠️ Request timed out (attempt {attempt+1}/{max_retries}). Retrying...")
                 time.sleep(retry_delay)
                 retry_delay *= 2
             else:
-                st.error("⏱️ API Request timed out. The server might be experiencing heavy load.")
+                if 'predict' in endpoint:
+                    st.error("⏱️ Prediction request timed out. The audio file may be too large or complex to process in the allowed time.")
+                else:
+                    st.error("⏱️ API Request timed out. The server might be experiencing heavy load.")
                 return None
                 
         except RequestException as e:
@@ -159,11 +187,16 @@ def check_api_health():
         if API_KEY:
             params['api_key'] = API_KEY
             
-        response = requests.get(url, headers=HEADERS, params=params, timeout=3)
+        # Short timeout for health checks since they should be fast
+        response = requests.get(url, headers=HEADERS, params=params, timeout=5)
         if response.status_code == 200:
             return response.json()
         return None
+    except requests.Timeout:
+        # Silently fail on timeout - we'll just show the API as offline
+        return None
     except Exception:
+        # Silently fail on other exceptions too
         return None
 
 # Storage configuration
@@ -391,7 +424,8 @@ if page == "Model Monitoring":
     
     # Latest evaluation metrics
     st.subheader("Latest Model Evaluation")
-    latest_eval = call_api('get', '/evaluate/')
+    with st.spinner("Fetching evaluation metrics..."):
+        latest_eval = call_api('get', '/evaluate/', timeout=60)  # 60 second timeout for evaluation
     
     try:
         if latest_eval:
@@ -614,7 +648,9 @@ elif page == "Predictions":
         try:
             with open(temp_path, 'rb') as file_handle:
                 files = {'file': ('audio.wav', file_handle.read(), 'audio/wav')}
-                prediction = call_api('post', '/predict/', files=files, timeout=15)  # Longer timeout for audio processing
+                st.info("📊 Processing audio... This may take up to 2 minutes for larger or complex audio files.")
+                with st.spinner("Analyzing audio patterns... Please wait."):
+                    prediction = call_api('post', '/predict/', files=files, timeout=120)  # Use a very long timeout (2 minutes) for audio processing
             
             if prediction:
                 # Display prediction
@@ -678,6 +714,10 @@ elif page == "Training":
         total_files = len(normal_files) + len(abnormal_files)
         st.write(f"Total files ready for training: {total_files}")
         
+        # Add warning for large dataset uploads
+        if total_files > 20:
+            st.warning(f"⚠️ You've uploaded {total_files} files. Training with a large number of audio files may take several minutes. Please be patient during processing.")
+        
         col1, col2 = st.columns([2, 1])
         with col1:
             train_button = st.button("Start Training", use_container_width=True)
@@ -722,11 +762,12 @@ elif page == "Training":
                 progress_bar.progress(current_step / total_steps)
                 
                 # Step 3: Model Training
-                status_text.markdown("🔄 Training model...")
+                status_text.markdown("🔄 Training model... This may take several minutes depending on dataset size.")
+                st.info("⏳ Model training is in progress. Please do not close this window or navigate away. For large datasets, this operation can take up to 5 minutes.")
                 current_step += 1
                 progress_bar.progress(current_step / total_steps)
                 
-                result = call_api('post', '/retrain/', files=files, timeout=120)  # Long timeout for model training
+                result = call_api('post', '/retrain/', files=files, timeout=300)  # Very long timeout (5 minutes) for model training
                 
                 if result:
                     # Step 4: Model Evaluation
