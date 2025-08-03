@@ -1,0 +1,378 @@
+2025-08-03 15:52:28,330 - pump_anomaly.api - INFO - Model info requested
+2025-08-03 15:52:30,462 - pump_anomaly.api - INFO - Model evaluation requested
+2025-08-03 15:55:20,375 - pump_anomaly.api - INFO - Retrain request received: 12 files
+2025-08-03 16:01:25,987 - pump_anomaly.api - INFO - Model info requested
+2025-08-03 16:01:28,020 - pump_anomaly.api - INFO - Model evaluation requested
+2025-08-03 16:03:01,392 - pump_anomaly.api - INFO - Retrain request received: 20 files
+2025-08-03 16:15:55,116 - pump_anomaly.api - INFO - Model info requested
+2025-08-03 16:15:57,242 - pump_anomaly.api - INFO - Model evaluation requested
+2025-08-03 16:22:12,757 - pump_anomaly.api - INFO - Model info requested
+2025-08-03 16:22:14,844 - pump_anomaly.api - INFO - Model evaluation requested
+2025-08-03 16:22:14,846 - pump_anomaly.api - ERROR - Error during model evaluation: 
+2025-08-03 16:22:17,166 - pump_anomaly.api - INFO - Model evaluation requested
+2025-08-03 16:22:17,205 - pump_anomaly.api - ERROR - Error during model evaluation: 
+2025-08-03 16:23:09,900 - pump_anomaly.api - INFO - Model info requested
+2025-08-03 16:23:12,004 - pump_anomaly.api - INFO - Model evaluation requested
+2025-08-03 16:23:12,004 - pump_anomaly.api - ERROR - Error during model evaluation: 
+2025-08-03 16:23:14,254 - pump_anomaly.api - INFO - Model evaluation requested
+2025-08-03 16:23:14,255 - pump_anomaly.api - ERROR - Error during model evaluation: 
+2025-08-03 16:27:06,949 - pump_anomaly.api - INFO - Initializing preprocessor...
+2025-08-03 16:27:06,950 - pump_anomaly.api - INFO - Preprocessor initialized. Scaler fitted: True
+2025-08-03 16:27:06,951 - pump_anomaly.api - INFO - Initializing model...
+2025-08-03 16:27:06,951 - pump_anomaly.api - INFO - Model initialized. Model loaded: False
+2025-08-03 16:27:06,952 - pump_anomaly.api - WARNING - No pre-trained model found. Model will need to be trained before use.
+2025-08-03 16:29:30,779 - pump_anomaly.api - INFO - Initializing preprocessor...
+2025-08-03 16:29:30,783 - pump_anomaly.api - INFO - Preprocessor initialized. Scaler fitted: True
+2025-08-03 16:29:30,785 - pump_anomaly.api - INFO - Initializing model...
+2025-08-03 16:29:30,787 - pump_anomaly.api - INFO - Model initialized. Model loaded: False
+2025-08-03 16:29:30,789 - pump_anomaly.api - WARNING - No pre-trained model found. Model will need to be trained before use.
+2025-08-03 16:29:51,474 - pump_anomaly.api - INFO - Model info requested
+2025-08-03 16:29:53,707 - pump_anomaly.api - INFO - Model evaluation requested
+2025-08-03 16:29:53,853 - pump_anomaly.api - ERROR - HTTP Exception during model evaluation: Model not trained
+2025-08-03 16:29:56,249 - pump_anomaly.api - INFO - Model evaluation requested
+2025-08-03 16:29:56,295 - pump_anomaly.api - ERROR - HTTP Exception during model evaluation: Model not trained
+2025-08-03 16:34:17,834 - pump_anomaly.api - INFO - Initializing preprocessor...
+2025-08-03 16:34:18,121 - pump_anomaly.api - INFO - Preprocessor initialized. Scaler fitted: True
+2025-08-03 16:34:18,122 - pump_anomaly.api - INFO - Initializing model...
+2025-08-03 16:34:21,607 - pump_anomaly.api - INFO - Model initialized. Model loaded: True
+2025-08-03 16:34:21,719 - pump_anomaly.api - INFO - Pre-trained model loaded successfully.
+2025-08-03 16:35:34,230 - pump_anomaly.api - INFO - Initializing preprocessor...
+2025-08-03 16:35:34,233 - pump_anomaly.api - INFO - Preprocessor initialized. Scaler fitted: True
+2025-08-03 16:35:34,240 - pump_anomaly.api - INFO - Initializing model...
+2025-08-03 16:35:34,945 - pump_anomaly.api - INFO - Model initialized. Model loaded: True
+2025-08-03 16:35:35,139 - pump_anomaly.api - INFO - Pre-trained model loaded successfully.
+2025-08-03 16:36:17,363 - pump_anomaly.api - INFO - Initializing preprocessor...
+2025-08-03 16:36:17,368 - pump_anomaly.api - INFO - Preprocessor initialized. Scaler fitted: True
+2025-08-03 16:36:17,416 - pump_anomaly.api - INFO - Initializing model...
+2025-08-03 16:36:17,902 - pump_anomaly.api - INFO - Model initialized. Model loaded: True
+2025-08-03 16:36:17,903 - pump_anomaly.api - INFO - Pre-trained model loaded successfully.
+2025-08-03 16:36:18,149 - pump_anomaly.api - INFO - Model info requested
+2025-08-03 16:36:20,193 - pump_anomaly.api - INFO - Model evaluation requested
+2025-08-03 16:36:20,310 - pump_anomaly.api - INFO - Loading test data from: C:\Users\HP\Desktop\Github_Forks\pump_anomaly_detection\data\test_features.csv
+2025-08-03 16:36:20,417 - pump_anomaly.api - INFO - Test data shape: (842, 75)
+2025-08-03 16:36:20,433 - pump_anomaly.api - INFO - Test data columns: ['file_path', 'label', 'augmented', 'mfcc1_mean', 'mfcc1_std', 'mfcc1_max', 'mfcc1_min', 'mfcc2_mean', 'mfcc2_std', 'mfcc2_max', 'mfcc2_min', 'mfcc3_mean', 'mfcc3_std', 'mfcc3_max', 'mfcc3_min', 'mfcc4_mean', 'mfcc4_std', 'mfcc4_max', 'mfcc4_min', 'mfcc5_mean', 'mfcc5_std', 'mfcc5_max', 'mfcc5_min', 'mfcc6_mean', 'mfcc6_std', 'mfcc6_max', 'mfcc6_min', 'mfcc7_mean', 'mfcc7_std', 'mfcc7_max', 'mfcc7_min', 'mfcc8_mean', 'mfcc8_std', 'mfcc8_max', 'mfcc8_min', 'mfcc9_mean', 'mfcc9_std', 'mfcc9_max', 'mfcc9_min', 'mfcc10_mean', 'mfcc10_std', 'mfcc10_max', 'mfcc10_min', 'mfcc11_mean', 'mfcc11_std', 'mfcc11_max', 'mfcc11_min', 'mfcc12_mean', 'mfcc12_std', 'mfcc12_max', 'mfcc12_min', 'mfcc13_mean', 'mfcc13_std', 'mfcc13_max', 'mfcc13_min', 'spectral_centroid_mean', 'spectral_centroid_std', 'spectral_centroid_max', 'spectral_centroid_min', 'spectral_bandwidth_mean', 'spectral_bandwidth_std', 'spectral_bandwidth_max', 'spectral_bandwidth_min', 'spectral_rolloff_mean', 'spectral_rolloff_std', 'spectral_rolloff_max', 'spectral_rolloff_min', 'zero_crossing_rate_mean', 'zero_crossing_rate_std', 'zero_crossing_rate_max', 'zero_crossing_rate_min', 'rms_mean', 'rms_std', 'rms_max', 'rms_min']
+2025-08-03 16:36:20,440 - pump_anomaly.api - INFO - Feature matrix shape: (842, 72)
+2025-08-03 16:36:20,445 - pump_anomaly.api - INFO - Labels shape: (842,)
+2025-08-03 16:36:20,445 - pump_anomaly.api - INFO - Scaling features...
+2025-08-03 16:36:20,491 - pump_anomaly.api - INFO - Scaled features shape: (842, 72)
+2025-08-03 16:36:20,588 - pump_anomaly.api - INFO - Evaluating model...
+2025-08-03 16:36:21,429 - pump_anomaly.api - INFO - Model evaluation completed successfully
+2025-08-03 16:36:24,652 - pump_anomaly.api - INFO - Model evaluation requested
+2025-08-03 16:36:24,691 - pump_anomaly.api - INFO - Loading test data from: C:\Users\HP\Desktop\Github_Forks\pump_anomaly_detection\data\test_features.csv
+2025-08-03 16:36:24,782 - pump_anomaly.api - INFO - Test data shape: (842, 75)
+2025-08-03 16:36:24,861 - pump_anomaly.api - INFO - Test data columns: ['file_path', 'label', 'augmented', 'mfcc1_mean', 'mfcc1_std', 'mfcc1_max', 'mfcc1_min', 'mfcc2_mean', 'mfcc2_std', 'mfcc2_max', 'mfcc2_min', 'mfcc3_mean', 'mfcc3_std', 'mfcc3_max', 'mfcc3_min', 'mfcc4_mean', 'mfcc4_std', 'mfcc4_max', 'mfcc4_min', 'mfcc5_mean', 'mfcc5_std', 'mfcc5_max', 'mfcc5_min', 'mfcc6_mean', 'mfcc6_std', 'mfcc6_max', 'mfcc6_min', 'mfcc7_mean', 'mfcc7_std', 'mfcc7_max', 'mfcc7_min', 'mfcc8_mean', 'mfcc8_std', 'mfcc8_max', 'mfcc8_min', 'mfcc9_mean', 'mfcc9_std', 'mfcc9_max', 'mfcc9_min', 'mfcc10_mean', 'mfcc10_std', 'mfcc10_max', 'mfcc10_min', 'mfcc11_mean', 'mfcc11_std', 'mfcc11_max', 'mfcc11_min', 'mfcc12_mean', 'mfcc12_std', 'mfcc12_max', 'mfcc12_min', 'mfcc13_mean', 'mfcc13_std', 'mfcc13_max', 'mfcc13_min', 'spectral_centroid_mean', 'spectral_centroid_std', 'spectral_centroid_max', 'spectral_centroid_min', 'spectral_bandwidth_mean', 'spectral_bandwidth_std', 'spectral_bandwidth_max', 'spectral_bandwidth_min', 'spectral_rolloff_mean', 'spectral_rolloff_std', 'spectral_rolloff_max', 'spectral_rolloff_min', 'zero_crossing_rate_mean', 'zero_crossing_rate_std', 'zero_crossing_rate_max', 'zero_crossing_rate_min', 'rms_mean', 'rms_std', 'rms_max', 'rms_min']
+2025-08-03 16:36:24,898 - pump_anomaly.api - INFO - Feature matrix shape: (842, 72)
+2025-08-03 16:36:24,959 - pump_anomaly.api - INFO - Labels shape: (842,)
+2025-08-03 16:36:24,978 - pump_anomaly.api - INFO - Scaling features...
+2025-08-03 16:36:25,001 - pump_anomaly.api - INFO - Scaled features shape: (842, 72)
+2025-08-03 16:36:25,018 - pump_anomaly.api - INFO - Evaluating model...
+2025-08-03 16:36:25,571 - pump_anomaly.api - INFO - Model evaluation completed successfully
+2025-08-03 16:37:32,618 - pump_anomaly.api - INFO - Model info requested
+2025-08-03 16:37:39,727 - pump_anomaly.api - INFO - Model info requested
+2025-08-03 16:37:41,885 - pump_anomaly.api - INFO - Model evaluation requested
+2025-08-03 16:37:41,886 - pump_anomaly.api - INFO - Loading test data from: C:\Users\HP\Desktop\Github_Forks\pump_anomaly_detection\data\test_features.csv
+2025-08-03 16:37:41,924 - pump_anomaly.api - INFO - Test data shape: (842, 75)
+2025-08-03 16:37:41,925 - pump_anomaly.api - INFO - Test data columns: ['file_path', 'label', 'augmented', 'mfcc1_mean', 'mfcc1_std', 'mfcc1_max', 'mfcc1_min', 'mfcc2_mean', 'mfcc2_std', 'mfcc2_max', 'mfcc2_min', 'mfcc3_mean', 'mfcc3_std', 'mfcc3_max', 'mfcc3_min', 'mfcc4_mean', 'mfcc4_std', 'mfcc4_max', 'mfcc4_min', 'mfcc5_mean', 'mfcc5_std', 'mfcc5_max', 'mfcc5_min', 'mfcc6_mean', 'mfcc6_std', 'mfcc6_max', 'mfcc6_min', 'mfcc7_mean', 'mfcc7_std', 'mfcc7_max', 'mfcc7_min', 'mfcc8_mean', 'mfcc8_std', 'mfcc8_max', 'mfcc8_min', 'mfcc9_mean', 'mfcc9_std', 'mfcc9_max', 'mfcc9_min', 'mfcc10_mean', 'mfcc10_std', 'mfcc10_max', 'mfcc10_min', 'mfcc11_mean', 'mfcc11_std', 'mfcc11_max', 'mfcc11_min', 'mfcc12_mean', 'mfcc12_std', 'mfcc12_max', 'mfcc12_min', 'mfcc13_mean', 'mfcc13_std', 'mfcc13_max', 'mfcc13_min', 'spectral_centroid_mean', 'spectral_centroid_std', 'spectral_centroid_max', 'spectral_centroid_min', 'spectral_bandwidth_mean', 'spectral_bandwidth_std', 'spectral_bandwidth_max', 'spectral_bandwidth_min', 'spectral_rolloff_mean', 'spectral_rolloff_std', 'spectral_rolloff_max', 'spectral_rolloff_min', 'zero_crossing_rate_mean', 'zero_crossing_rate_std', 'zero_crossing_rate_max', 'zero_crossing_rate_min', 'rms_mean', 'rms_std', 'rms_max', 'rms_min']
+2025-08-03 16:37:41,929 - pump_anomaly.api - INFO - Feature matrix shape: (842, 72)
+2025-08-03 16:37:41,930 - pump_anomaly.api - INFO - Labels shape: (842,)
+2025-08-03 16:37:41,931 - pump_anomaly.api - INFO - Scaling features...
+2025-08-03 16:37:41,938 - pump_anomaly.api - INFO - Scaled features shape: (842, 72)
+2025-08-03 16:37:41,939 - pump_anomaly.api - INFO - Evaluating model...
+2025-08-03 16:37:42,106 - pump_anomaly.api - INFO - Model evaluation completed successfully
+2025-08-03 16:37:44,283 - pump_anomaly.api - INFO - Model evaluation requested
+2025-08-03 16:37:44,286 - pump_anomaly.api - INFO - Loading test data from: C:\Users\HP\Desktop\Github_Forks\pump_anomaly_detection\data\test_features.csv
+2025-08-03 16:37:44,320 - pump_anomaly.api - INFO - Test data shape: (842, 75)
+2025-08-03 16:37:44,320 - pump_anomaly.api - INFO - Test data columns: ['file_path', 'label', 'augmented', 'mfcc1_mean', 'mfcc1_std', 'mfcc1_max', 'mfcc1_min', 'mfcc2_mean', 'mfcc2_std', 'mfcc2_max', 'mfcc2_min', 'mfcc3_mean', 'mfcc3_std', 'mfcc3_max', 'mfcc3_min', 'mfcc4_mean', 'mfcc4_std', 'mfcc4_max', 'mfcc4_min', 'mfcc5_mean', 'mfcc5_std', 'mfcc5_max', 'mfcc5_min', 'mfcc6_mean', 'mfcc6_std', 'mfcc6_max', 'mfcc6_min', 'mfcc7_mean', 'mfcc7_std', 'mfcc7_max', 'mfcc7_min', 'mfcc8_mean', 'mfcc8_std', 'mfcc8_max', 'mfcc8_min', 'mfcc9_mean', 'mfcc9_std', 'mfcc9_max', 'mfcc9_min', 'mfcc10_mean', 'mfcc10_std', 'mfcc10_max', 'mfcc10_min', 'mfcc11_mean', 'mfcc11_std', 'mfcc11_max', 'mfcc11_min', 'mfcc12_mean', 'mfcc12_std', 'mfcc12_max', 'mfcc12_min', 'mfcc13_mean', 'mfcc13_std', 'mfcc13_max', 'mfcc13_min', 'spectral_centroid_mean', 'spectral_centroid_std', 'spectral_centroid_max', 'spectral_centroid_min', 'spectral_bandwidth_mean', 'spectral_bandwidth_std', 'spectral_bandwidth_max', 'spectral_bandwidth_min', 'spectral_rolloff_mean', 'spectral_rolloff_std', 'spectral_rolloff_max', 'spectral_rolloff_min', 'zero_crossing_rate_mean', 'zero_crossing_rate_std', 'zero_crossing_rate_max', 'zero_crossing_rate_min', 'rms_mean', 'rms_std', 'rms_max', 'rms_min']
+2025-08-03 16:37:44,323 - pump_anomaly.api - INFO - Feature matrix shape: (842, 72)
+2025-08-03 16:37:44,323 - pump_anomaly.api - INFO - Labels shape: (842,)
+2025-08-03 16:37:44,324 - pump_anomaly.api - INFO - Scaling features...
+2025-08-03 16:37:44,328 - pump_anomaly.api - INFO - Scaled features shape: (842, 72)
+2025-08-03 16:37:44,329 - pump_anomaly.api - INFO - Evaluating model...
+2025-08-03 16:37:44,489 - pump_anomaly.api - INFO - Model evaluation completed successfully
+2025-08-03 16:39:12,255 - pump_anomaly.api - INFO - Initializing preprocessor...
+2025-08-03 16:39:12,262 - pump_anomaly.api - INFO - Preprocessor initialized. Scaler fitted: True
+2025-08-03 16:39:12,263 - pump_anomaly.api - INFO - Initializing model...
+2025-08-03 16:39:12,643 - pump_anomaly.api - INFO - Model initialized. Model loaded: True
+2025-08-03 16:39:12,645 - pump_anomaly.api - INFO - Pre-trained model loaded successfully.
+2025-08-03 16:39:12,699 - pump_anomaly.api - INFO - Model info requested
+2025-08-03 16:39:14,755 - pump_anomaly.api - INFO - Model evaluation requested
+2025-08-03 16:39:14,756 - pump_anomaly.api - INFO - Loading test data from: C:\Users\HP\Desktop\Github_Forks\pump_anomaly_detection\data\test_features.csv
+2025-08-03 16:39:14,804 - pump_anomaly.api - INFO - Test data shape: (842, 75)
+2025-08-03 16:39:14,807 - pump_anomaly.api - INFO - Test data columns: ['file_path', 'label', 'augmented', 'mfcc1_mean', 'mfcc1_std', 'mfcc1_max', 'mfcc1_min', 'mfcc2_mean', 'mfcc2_std', 'mfcc2_max', 'mfcc2_min', 'mfcc3_mean', 'mfcc3_std', 'mfcc3_max', 'mfcc3_min', 'mfcc4_mean', 'mfcc4_std', 'mfcc4_max', 'mfcc4_min', 'mfcc5_mean', 'mfcc5_std', 'mfcc5_max', 'mfcc5_min', 'mfcc6_mean', 'mfcc6_std', 'mfcc6_max', 'mfcc6_min', 'mfcc7_mean', 'mfcc7_std', 'mfcc7_max', 'mfcc7_min', 'mfcc8_mean', 'mfcc8_std', 'mfcc8_max', 'mfcc8_min', 'mfcc9_mean', 'mfcc9_std', 'mfcc9_max', 'mfcc9_min', 'mfcc10_mean', 'mfcc10_std', 'mfcc10_max', 'mfcc10_min', 'mfcc11_mean', 'mfcc11_std', 'mfcc11_max', 'mfcc11_min', 'mfcc12_mean', 'mfcc12_std', 'mfcc12_max', 'mfcc12_min', 'mfcc13_mean', 'mfcc13_std', 'mfcc13_max', 'mfcc13_min', 'spectral_centroid_mean', 'spectral_centroid_std', 'spectral_centroid_max', 'spectral_centroid_min', 'spectral_bandwidth_mean', 'spectral_bandwidth_std', 'spectral_bandwidth_max', 'spectral_bandwidth_min', 'spectral_rolloff_mean', 'spectral_rolloff_std', 'spectral_rolloff_max', 'spectral_rolloff_min', 'zero_crossing_rate_mean', 'zero_crossing_rate_std', 'zero_crossing_rate_max', 'zero_crossing_rate_min', 'rms_mean', 'rms_std', 'rms_max', 'rms_min']
+2025-08-03 16:39:14,817 - pump_anomaly.api - INFO - Feature matrix shape: (842, 72)
+2025-08-03 16:39:14,818 - pump_anomaly.api - INFO - Labels shape: (842,)
+2025-08-03 16:39:14,818 - pump_anomaly.api - INFO - Scaling features...
+2025-08-03 16:39:14,828 - pump_anomaly.api - INFO - Scaled features shape: (842, 72)
+2025-08-03 16:39:14,829 - pump_anomaly.api - INFO - Evaluating model...
+2025-08-03 16:39:15,127 - pump_anomaly.api - INFO - Model evaluation completed successfully
+2025-08-03 16:39:17,342 - pump_anomaly.api - INFO - Model evaluation requested
+2025-08-03 16:39:17,344 - pump_anomaly.api - INFO - Loading test data from: C:\Users\HP\Desktop\Github_Forks\pump_anomaly_detection\data\test_features.csv
+2025-08-03 16:39:17,393 - pump_anomaly.api - INFO - Test data shape: (842, 75)
+2025-08-03 16:39:17,407 - pump_anomaly.api - INFO - Test data columns: ['file_path', 'label', 'augmented', 'mfcc1_mean', 'mfcc1_std', 'mfcc1_max', 'mfcc1_min', 'mfcc2_mean', 'mfcc2_std', 'mfcc2_max', 'mfcc2_min', 'mfcc3_mean', 'mfcc3_std', 'mfcc3_max', 'mfcc3_min', 'mfcc4_mean', 'mfcc4_std', 'mfcc4_max', 'mfcc4_min', 'mfcc5_mean', 'mfcc5_std', 'mfcc5_max', 'mfcc5_min', 'mfcc6_mean', 'mfcc6_std', 'mfcc6_max', 'mfcc6_min', 'mfcc7_mean', 'mfcc7_std', 'mfcc7_max', 'mfcc7_min', 'mfcc8_mean', 'mfcc8_std', 'mfcc8_max', 'mfcc8_min', 'mfcc9_mean', 'mfcc9_std', 'mfcc9_max', 'mfcc9_min', 'mfcc10_mean', 'mfcc10_std', 'mfcc10_max', 'mfcc10_min', 'mfcc11_mean', 'mfcc11_std', 'mfcc11_max', 'mfcc11_min', 'mfcc12_mean', 'mfcc12_std', 'mfcc12_max', 'mfcc12_min', 'mfcc13_mean', 'mfcc13_std', 'mfcc13_max', 'mfcc13_min', 'spectral_centroid_mean', 'spectral_centroid_std', 'spectral_centroid_max', 'spectral_centroid_min', 'spectral_bandwidth_mean', 'spectral_bandwidth_std', 'spectral_bandwidth_max', 'spectral_bandwidth_min', 'spectral_rolloff_mean', 'spectral_rolloff_std', 'spectral_rolloff_max', 'spectral_rolloff_min', 'zero_crossing_rate_mean', 'zero_crossing_rate_std', 'zero_crossing_rate_max', 'zero_crossing_rate_min', 'rms_mean', 'rms_std', 'rms_max', 'rms_min']
+2025-08-03 16:39:17,412 - pump_anomaly.api - INFO - Feature matrix shape: (842, 72)
+2025-08-03 16:39:17,412 - pump_anomaly.api - INFO - Labels shape: (842,)
+2025-08-03 16:39:17,413 - pump_anomaly.api - INFO - Scaling features...
+2025-08-03 16:39:17,417 - pump_anomaly.api - INFO - Scaled features shape: (842, 72)
+2025-08-03 16:39:17,418 - pump_anomaly.api - INFO - Evaluating model...
+2025-08-03 16:39:17,812 - pump_anomaly.api - INFO - Model evaluation completed successfully
+2025-08-03 16:39:51,467 - pump_anomaly.api - INFO - Model info requested
+2025-08-03 16:39:53,534 - pump_anomaly.api - INFO - Model evaluation requested
+2025-08-03 16:39:53,538 - pump_anomaly.api - INFO - Loading test data from: C:\Users\HP\Desktop\Github_Forks\pump_anomaly_detection\data\test_features.csv
+2025-08-03 16:39:53,585 - pump_anomaly.api - INFO - Test data shape: (842, 75)
+2025-08-03 16:39:53,587 - pump_anomaly.api - INFO - Test data columns: ['file_path', 'label', 'augmented', 'mfcc1_mean', 'mfcc1_std', 'mfcc1_max', 'mfcc1_min', 'mfcc2_mean', 'mfcc2_std', 'mfcc2_max', 'mfcc2_min', 'mfcc3_mean', 'mfcc3_std', 'mfcc3_max', 'mfcc3_min', 'mfcc4_mean', 'mfcc4_std', 'mfcc4_max', 'mfcc4_min', 'mfcc5_mean', 'mfcc5_std', 'mfcc5_max', 'mfcc5_min', 'mfcc6_mean', 'mfcc6_std', 'mfcc6_max', 'mfcc6_min', 'mfcc7_mean', 'mfcc7_std', 'mfcc7_max', 'mfcc7_min', 'mfcc8_mean', 'mfcc8_std', 'mfcc8_max', 'mfcc8_min', 'mfcc9_mean', 'mfcc9_std', 'mfcc9_max', 'mfcc9_min', 'mfcc10_mean', 'mfcc10_std', 'mfcc10_max', 'mfcc10_min', 'mfcc11_mean', 'mfcc11_std', 'mfcc11_max', 'mfcc11_min', 'mfcc12_mean', 'mfcc12_std', 'mfcc12_max', 'mfcc12_min', 'mfcc13_mean', 'mfcc13_std', 'mfcc13_max', 'mfcc13_min', 'spectral_centroid_mean', 'spectral_centroid_std', 'spectral_centroid_max', 'spectral_centroid_min', 'spectral_bandwidth_mean', 'spectral_bandwidth_std', 'spectral_bandwidth_max', 'spectral_bandwidth_min', 'spectral_rolloff_mean', 'spectral_rolloff_std', 'spectral_rolloff_max', 'spectral_rolloff_min', 'zero_crossing_rate_mean', 'zero_crossing_rate_std', 'zero_crossing_rate_max', 'zero_crossing_rate_min', 'rms_mean', 'rms_std', 'rms_max', 'rms_min']
+2025-08-03 16:39:53,592 - pump_anomaly.api - INFO - Feature matrix shape: (842, 72)
+2025-08-03 16:39:53,593 - pump_anomaly.api - INFO - Labels shape: (842,)
+2025-08-03 16:39:53,595 - pump_anomaly.api - INFO - Scaling features...
+2025-08-03 16:39:53,605 - pump_anomaly.api - INFO - Scaled features shape: (842, 72)
+2025-08-03 16:39:53,609 - pump_anomaly.api - INFO - Evaluating model...
+2025-08-03 16:39:53,891 - pump_anomaly.api - INFO - Model evaluation completed successfully
+2025-08-03 16:39:56,584 - pump_anomaly.api - INFO - Model evaluation requested
+2025-08-03 16:39:56,741 - pump_anomaly.api - INFO - Loading test data from: C:\Users\HP\Desktop\Github_Forks\pump_anomaly_detection\data\test_features.csv
+2025-08-03 16:39:56,938 - pump_anomaly.api - INFO - Test data shape: (842, 75)
+2025-08-03 16:39:56,941 - pump_anomaly.api - INFO - Test data columns: ['file_path', 'label', 'augmented', 'mfcc1_mean', 'mfcc1_std', 'mfcc1_max', 'mfcc1_min', 'mfcc2_mean', 'mfcc2_std', 'mfcc2_max', 'mfcc2_min', 'mfcc3_mean', 'mfcc3_std', 'mfcc3_max', 'mfcc3_min', 'mfcc4_mean', 'mfcc4_std', 'mfcc4_max', 'mfcc4_min', 'mfcc5_mean', 'mfcc5_std', 'mfcc5_max', 'mfcc5_min', 'mfcc6_mean', 'mfcc6_std', 'mfcc6_max', 'mfcc6_min', 'mfcc7_mean', 'mfcc7_std', 'mfcc7_max', 'mfcc7_min', 'mfcc8_mean', 'mfcc8_std', 'mfcc8_max', 'mfcc8_min', 'mfcc9_mean', 'mfcc9_std', 'mfcc9_max', 'mfcc9_min', 'mfcc10_mean', 'mfcc10_std', 'mfcc10_max', 'mfcc10_min', 'mfcc11_mean', 'mfcc11_std', 'mfcc11_max', 'mfcc11_min', 'mfcc12_mean', 'mfcc12_std', 'mfcc12_max', 'mfcc12_min', 'mfcc13_mean', 'mfcc13_std', 'mfcc13_max', 'mfcc13_min', 'spectral_centroid_mean', 'spectral_centroid_std', 'spectral_centroid_max', 'spectral_centroid_min', 'spectral_bandwidth_mean', 'spectral_bandwidth_std', 'spectral_bandwidth_max', 'spectral_bandwidth_min', 'spectral_rolloff_mean', 'spectral_rolloff_std', 'spectral_rolloff_max', 'spectral_rolloff_min', 'zero_crossing_rate_mean', 'zero_crossing_rate_std', 'zero_crossing_rate_max', 'zero_crossing_rate_min', 'rms_mean', 'rms_std', 'rms_max', 'rms_min']
+2025-08-03 16:39:57,006 - pump_anomaly.api - INFO - Feature matrix shape: (842, 72)
+2025-08-03 16:39:57,011 - pump_anomaly.api - INFO - Labels shape: (842,)
+2025-08-03 16:39:57,013 - pump_anomaly.api - INFO - Scaling features...
+2025-08-03 16:39:57,028 - pump_anomaly.api - INFO - Scaled features shape: (842, 72)
+2025-08-03 16:39:57,041 - pump_anomaly.api - INFO - Evaluating model...
+2025-08-03 16:39:57,459 - pump_anomaly.api - INFO - Model evaluation completed successfully
+2025-08-03 16:40:18,419 - pump_anomaly.api - INFO - Initializing preprocessor...
+2025-08-03 16:40:18,421 - pump_anomaly.api - INFO - Preprocessor initialized. Scaler fitted: True
+2025-08-03 16:40:18,421 - pump_anomaly.api - INFO - Initializing model...
+2025-08-03 16:40:18,611 - pump_anomaly.api - INFO - Model initialized. Model loaded: True
+2025-08-03 16:40:18,611 - pump_anomaly.api - INFO - Pre-trained model loaded successfully.
+2025-08-03 16:40:32,475 - pump_anomaly.api - INFO - Model info requested
+2025-08-03 16:40:34,578 - pump_anomaly.api - INFO - Model evaluation requested
+2025-08-03 16:40:34,610 - pump_anomaly.api - INFO - Loading test data from: C:\Users\HP\Desktop\Github_Forks\pump_anomaly_detection\data\test_features.csv
+2025-08-03 16:40:34,652 - pump_anomaly.api - INFO - Test data shape: (842, 75)
+2025-08-03 16:40:34,725 - pump_anomaly.api - INFO - Test data columns: ['file_path', 'label', 'augmented', 'mfcc1_mean', 'mfcc1_std', 'mfcc1_max', 'mfcc1_min', 'mfcc2_mean', 'mfcc2_std', 'mfcc2_max', 'mfcc2_min', 'mfcc3_mean', 'mfcc3_std', 'mfcc3_max', 'mfcc3_min', 'mfcc4_mean', 'mfcc4_std', 'mfcc4_max', 'mfcc4_min', 'mfcc5_mean', 'mfcc5_std', 'mfcc5_max', 'mfcc5_min', 'mfcc6_mean', 'mfcc6_std', 'mfcc6_max', 'mfcc6_min', 'mfcc7_mean', 'mfcc7_std', 'mfcc7_max', 'mfcc7_min', 'mfcc8_mean', 'mfcc8_std', 'mfcc8_max', 'mfcc8_min', 'mfcc9_mean', 'mfcc9_std', 'mfcc9_max', 'mfcc9_min', 'mfcc10_mean', 'mfcc10_std', 'mfcc10_max', 'mfcc10_min', 'mfcc11_mean', 'mfcc11_std', 'mfcc11_max', 'mfcc11_min', 'mfcc12_mean', 'mfcc12_std', 'mfcc12_max', 'mfcc12_min', 'mfcc13_mean', 'mfcc13_std', 'mfcc13_max', 'mfcc13_min', 'spectral_centroid_mean', 'spectral_centroid_std', 'spectral_centroid_max', 'spectral_centroid_min', 'spectral_bandwidth_mean', 'spectral_bandwidth_std', 'spectral_bandwidth_max', 'spectral_bandwidth_min', 'spectral_rolloff_mean', 'spectral_rolloff_std', 'spectral_rolloff_max', 'spectral_rolloff_min', 'zero_crossing_rate_mean', 'zero_crossing_rate_std', 'zero_crossing_rate_max', 'zero_crossing_rate_min', 'rms_mean', 'rms_std', 'rms_max', 'rms_min']
+2025-08-03 16:40:35,295 - pump_anomaly.api - INFO - Feature matrix shape: (842, 72)
+2025-08-03 16:40:35,755 - pump_anomaly.api - INFO - Labels shape: (842,)
+2025-08-03 16:40:35,828 - pump_anomaly.api - INFO - Scaling features...
+2025-08-03 16:40:35,885 - pump_anomaly.api - INFO - Scaled features shape: (842, 72)
+2025-08-03 16:40:35,988 - pump_anomaly.api - INFO - Evaluating model...
+2025-08-03 16:40:37,315 - pump_anomaly.api - INFO - Model evaluation completed successfully
+2025-08-03 16:40:40,119 - pump_anomaly.api - INFO - Model evaluation requested
+2025-08-03 16:40:47,071 - pump_anomaly.api - INFO - Loading test data from: C:\Users\HP\Desktop\Github_Forks\pump_anomaly_detection\data\test_features.csv
+2025-08-03 16:40:47,597 - pump_anomaly.api - INFO - Test data shape: (842, 75)
+2025-08-03 16:40:47,768 - pump_anomaly.api - INFO - Test data columns: ['file_path', 'label', 'augmented', 'mfcc1_mean', 'mfcc1_std', 'mfcc1_max', 'mfcc1_min', 'mfcc2_mean', 'mfcc2_std', 'mfcc2_max', 'mfcc2_min', 'mfcc3_mean', 'mfcc3_std', 'mfcc3_max', 'mfcc3_min', 'mfcc4_mean', 'mfcc4_std', 'mfcc4_max', 'mfcc4_min', 'mfcc5_mean', 'mfcc5_std', 'mfcc5_max', 'mfcc5_min', 'mfcc6_mean', 'mfcc6_std', 'mfcc6_max', 'mfcc6_min', 'mfcc7_mean', 'mfcc7_std', 'mfcc7_max', 'mfcc7_min', 'mfcc8_mean', 'mfcc8_std', 'mfcc8_max', 'mfcc8_min', 'mfcc9_mean', 'mfcc9_std', 'mfcc9_max', 'mfcc9_min', 'mfcc10_mean', 'mfcc10_std', 'mfcc10_max', 'mfcc10_min', 'mfcc11_mean', 'mfcc11_std', 'mfcc11_max', 'mfcc11_min', 'mfcc12_mean', 'mfcc12_std', 'mfcc12_max', 'mfcc12_min', 'mfcc13_mean', 'mfcc13_std', 'mfcc13_max', 'mfcc13_min', 'spectral_centroid_mean', 'spectral_centroid_std', 'spectral_centroid_max', 'spectral_centroid_min', 'spectral_bandwidth_mean', 'spectral_bandwidth_std', 'spectral_bandwidth_max', 'spectral_bandwidth_min', 'spectral_rolloff_mean', 'spectral_rolloff_std', 'spectral_rolloff_max', 'spectral_rolloff_min', 'zero_crossing_rate_mean', 'zero_crossing_rate_std', 'zero_crossing_rate_max', 'zero_crossing_rate_min', 'rms_mean', 'rms_std', 'rms_max', 'rms_min']
+2025-08-03 16:40:48,080 - pump_anomaly.api - INFO - Feature matrix shape: (842, 72)
+2025-08-03 16:40:48,196 - pump_anomaly.api - INFO - Labels shape: (842,)
+2025-08-03 16:40:48,796 - pump_anomaly.api - INFO - Scaling features...
+2025-08-03 16:40:49,039 - pump_anomaly.api - INFO - Scaled features shape: (842, 72)
+2025-08-03 16:40:49,329 - pump_anomaly.api - INFO - Evaluating model...
+2025-08-03 16:40:49,949 - pump_anomaly.api - INFO - Model evaluation completed successfully
+2025-08-03 16:43:16,249 - pump_anomaly.api - INFO - Initializing preprocessor...
+2025-08-03 16:43:16,253 - pump_anomaly.api - INFO - Preprocessor initialized. Scaler fitted: True
+2025-08-03 16:43:16,254 - pump_anomaly.api - INFO - Initializing model...
+2025-08-03 16:43:16,576 - pump_anomaly.api - INFO - Model initialized. Model loaded: True
+2025-08-03 16:43:16,578 - pump_anomaly.api - INFO - Pre-trained model loaded successfully.
+2025-08-03 16:43:17,054 - pump_anomaly.api - INFO - Model info requested
+2025-08-03 16:43:19,122 - pump_anomaly.api - INFO - Model evaluation requested
+2025-08-03 16:43:19,124 - pump_anomaly.api - INFO - Loading test data from: C:\Users\HP\Desktop\Github_Forks\pump_anomaly_detection\data\test_features.csv
+2025-08-03 16:43:19,170 - pump_anomaly.api - INFO - Test data shape: (842, 75)
+2025-08-03 16:43:19,171 - pump_anomaly.api - INFO - Test data columns: ['file_path', 'label', 'augmented', 'mfcc1_mean', 'mfcc1_std', 'mfcc1_max', 'mfcc1_min', 'mfcc2_mean', 'mfcc2_std', 'mfcc2_max', 'mfcc2_min', 'mfcc3_mean', 'mfcc3_std', 'mfcc3_max', 'mfcc3_min', 'mfcc4_mean', 'mfcc4_std', 'mfcc4_max', 'mfcc4_min', 'mfcc5_mean', 'mfcc5_std', 'mfcc5_max', 'mfcc5_min', 'mfcc6_mean', 'mfcc6_std', 'mfcc6_max', 'mfcc6_min', 'mfcc7_mean', 'mfcc7_std', 'mfcc7_max', 'mfcc7_min', 'mfcc8_mean', 'mfcc8_std', 'mfcc8_max', 'mfcc8_min', 'mfcc9_mean', 'mfcc9_std', 'mfcc9_max', 'mfcc9_min', 'mfcc10_mean', 'mfcc10_std', 'mfcc10_max', 'mfcc10_min', 'mfcc11_mean', 'mfcc11_std', 'mfcc11_max', 'mfcc11_min', 'mfcc12_mean', 'mfcc12_std', 'mfcc12_max', 'mfcc12_min', 'mfcc13_mean', 'mfcc13_std', 'mfcc13_max', 'mfcc13_min', 'spectral_centroid_mean', 'spectral_centroid_std', 'spectral_centroid_max', 'spectral_centroid_min', 'spectral_bandwidth_mean', 'spectral_bandwidth_std', 'spectral_bandwidth_max', 'spectral_bandwidth_min', 'spectral_rolloff_mean', 'spectral_rolloff_std', 'spectral_rolloff_max', 'spectral_rolloff_min', 'zero_crossing_rate_mean', 'zero_crossing_rate_std', 'zero_crossing_rate_max', 'zero_crossing_rate_min', 'rms_mean', 'rms_std', 'rms_max', 'rms_min']
+2025-08-03 16:43:19,183 - pump_anomaly.api - INFO - Feature matrix shape: (842, 72)
+2025-08-03 16:43:19,198 - pump_anomaly.api - INFO - Labels shape: (842,)
+2025-08-03 16:43:19,199 - pump_anomaly.api - INFO - Scaling features...
+2025-08-03 16:43:19,205 - pump_anomaly.api - INFO - Scaled features shape: (842, 72)
+2025-08-03 16:43:19,214 - pump_anomaly.api - INFO - Evaluating model...
+2025-08-03 16:43:19,500 - pump_anomaly.api - INFO - Model evaluation completed successfully
+2025-08-03 16:43:21,721 - pump_anomaly.api - INFO - Model evaluation requested
+2025-08-03 16:43:21,722 - pump_anomaly.api - INFO - Loading test data from: C:\Users\HP\Desktop\Github_Forks\pump_anomaly_detection\data\test_features.csv
+2025-08-03 16:43:21,766 - pump_anomaly.api - INFO - Test data shape: (842, 75)
+2025-08-03 16:43:21,767 - pump_anomaly.api - INFO - Test data columns: ['file_path', 'label', 'augmented', 'mfcc1_mean', 'mfcc1_std', 'mfcc1_max', 'mfcc1_min', 'mfcc2_mean', 'mfcc2_std', 'mfcc2_max', 'mfcc2_min', 'mfcc3_mean', 'mfcc3_std', 'mfcc3_max', 'mfcc3_min', 'mfcc4_mean', 'mfcc4_std', 'mfcc4_max', 'mfcc4_min', 'mfcc5_mean', 'mfcc5_std', 'mfcc5_max', 'mfcc5_min', 'mfcc6_mean', 'mfcc6_std', 'mfcc6_max', 'mfcc6_min', 'mfcc7_mean', 'mfcc7_std', 'mfcc7_max', 'mfcc7_min', 'mfcc8_mean', 'mfcc8_std', 'mfcc8_max', 'mfcc8_min', 'mfcc9_mean', 'mfcc9_std', 'mfcc9_max', 'mfcc9_min', 'mfcc10_mean', 'mfcc10_std', 'mfcc10_max', 'mfcc10_min', 'mfcc11_mean', 'mfcc11_std', 'mfcc11_max', 'mfcc11_min', 'mfcc12_mean', 'mfcc12_std', 'mfcc12_max', 'mfcc12_min', 'mfcc13_mean', 'mfcc13_std', 'mfcc13_max', 'mfcc13_min', 'spectral_centroid_mean', 'spectral_centroid_std', 'spectral_centroid_max', 'spectral_centroid_min', 'spectral_bandwidth_mean', 'spectral_bandwidth_std', 'spectral_bandwidth_max', 'spectral_bandwidth_min', 'spectral_rolloff_mean', 'spectral_rolloff_std', 'spectral_rolloff_max', 'spectral_rolloff_min', 'zero_crossing_rate_mean', 'zero_crossing_rate_std', 'zero_crossing_rate_max', 'zero_crossing_rate_min', 'rms_mean', 'rms_std', 'rms_max', 'rms_min']
+2025-08-03 16:43:21,774 - pump_anomaly.api - INFO - Feature matrix shape: (842, 72)
+2025-08-03 16:43:21,800 - pump_anomaly.api - INFO - Labels shape: (842,)
+2025-08-03 16:43:21,801 - pump_anomaly.api - INFO - Scaling features...
+2025-08-03 16:43:21,809 - pump_anomaly.api - INFO - Scaled features shape: (842, 72)
+2025-08-03 16:43:21,821 - pump_anomaly.api - INFO - Evaluating model...
+2025-08-03 16:43:22,066 - pump_anomaly.api - INFO - Model evaluation completed successfully
+2025-08-03 16:44:09,943 - pump_anomaly.api - INFO - Initializing preprocessor...
+2025-08-03 16:44:09,947 - pump_anomaly.api - INFO - Preprocessor initialized. Scaler fitted: True
+2025-08-03 16:44:09,948 - pump_anomaly.api - INFO - Initializing model...
+2025-08-03 16:44:10,258 - pump_anomaly.api - INFO - Model initialized. Model loaded: True
+2025-08-03 16:44:10,297 - pump_anomaly.api - INFO - Pre-trained model loaded successfully.
+2025-08-03 16:44:47,739 - pump_anomaly.api - INFO - Prediction request received: audio.wav
+2025-08-03 16:48:44,913 - pump_anomaly.api - INFO - Initializing preprocessor...
+2025-08-03 16:48:45,042 - pump_anomaly.api - INFO - Preprocessor initialized. Scaler fitted: True
+2025-08-03 16:48:45,065 - pump_anomaly.api - INFO - Initializing model...
+2025-08-03 16:48:46,691 - pump_anomaly.api - INFO - Model initialized. Model loaded: True
+2025-08-03 16:48:46,752 - pump_anomaly.api - INFO - Pre-trained model loaded successfully.
+2025-08-03 16:49:04,898 - pump_anomaly.api - INFO - Initializing preprocessor...
+2025-08-03 16:49:04,901 - pump_anomaly.api - INFO - Preprocessor initialized. Scaler fitted: True
+2025-08-03 16:49:04,901 - pump_anomaly.api - INFO - Initializing model...
+2025-08-03 16:49:05,253 - pump_anomaly.api - INFO - Model initialized. Model loaded: True
+2025-08-03 16:49:05,255 - pump_anomaly.api - INFO - Pre-trained model loaded successfully.
+2025-08-03 16:49:26,497 - pump_anomaly.api - INFO - Initializing preprocessor...
+2025-08-03 16:49:26,504 - pump_anomaly.api - INFO - Preprocessor initialized. Scaler fitted: True
+2025-08-03 16:49:26,505 - pump_anomaly.api - INFO - Initializing model...
+2025-08-03 16:49:26,880 - pump_anomaly.api - INFO - Model initialized. Model loaded: True
+2025-08-03 16:49:26,884 - pump_anomaly.api - INFO - Pre-trained model loaded successfully.
+2025-08-03 16:51:09,382 - pump_anomaly.api - INFO - Initializing preprocessor...
+2025-08-03 16:51:09,384 - pump_anomaly.api - INFO - Preprocessor initialized. Scaler fitted: True
+2025-08-03 16:51:09,384 - pump_anomaly.api - INFO - Initializing model...
+2025-08-03 16:51:09,684 - pump_anomaly.api - INFO - Model initialized. Model loaded: True
+2025-08-03 16:51:09,685 - pump_anomaly.api - INFO - Pre-trained model loaded successfully.
+2025-08-03 16:51:29,904 - pump_anomaly.api - INFO - Model info requested
+2025-08-03 16:51:35,348 - pump_anomaly.api - INFO - Model evaluation requested
+2025-08-03 16:51:35,391 - pump_anomaly.api - INFO - Loading test data from: C:\Users\HP\Desktop\Github_Forks\pump_anomaly_detection\data\test_features.csv
+2025-08-03 16:51:35,517 - pump_anomaly.api - INFO - Test data shape: (842, 75)
+2025-08-03 16:51:35,525 - pump_anomaly.api - INFO - Test data columns: ['file_path', 'label', 'augmented', 'mfcc1_mean', 'mfcc1_std', 'mfcc1_max', 'mfcc1_min', 'mfcc2_mean', 'mfcc2_std', 'mfcc2_max', 'mfcc2_min', 'mfcc3_mean', 'mfcc3_std', 'mfcc3_max', 'mfcc3_min', 'mfcc4_mean', 'mfcc4_std', 'mfcc4_max', 'mfcc4_min', 'mfcc5_mean', 'mfcc5_std', 'mfcc5_max', 'mfcc5_min', 'mfcc6_mean', 'mfcc6_std', 'mfcc6_max', 'mfcc6_min', 'mfcc7_mean', 'mfcc7_std', 'mfcc7_max', 'mfcc7_min', 'mfcc8_mean', 'mfcc8_std', 'mfcc8_max', 'mfcc8_min', 'mfcc9_mean', 'mfcc9_std', 'mfcc9_max', 'mfcc9_min', 'mfcc10_mean', 'mfcc10_std', 'mfcc10_max', 'mfcc10_min', 'mfcc11_mean', 'mfcc11_std', 'mfcc11_max', 'mfcc11_min', 'mfcc12_mean', 'mfcc12_std', 'mfcc12_max', 'mfcc12_min', 'mfcc13_mean', 'mfcc13_std', 'mfcc13_max', 'mfcc13_min', 'spectral_centroid_mean', 'spectral_centroid_std', 'spectral_centroid_max', 'spectral_centroid_min', 'spectral_bandwidth_mean', 'spectral_bandwidth_std', 'spectral_bandwidth_max', 'spectral_bandwidth_min', 'spectral_rolloff_mean', 'spectral_rolloff_std', 'spectral_rolloff_max', 'spectral_rolloff_min', 'zero_crossing_rate_mean', 'zero_crossing_rate_std', 'zero_crossing_rate_max', 'zero_crossing_rate_min', 'rms_mean', 'rms_std', 'rms_max', 'rms_min']
+2025-08-03 16:51:35,534 - pump_anomaly.api - INFO - Feature matrix shape: (842, 72)
+2025-08-03 16:51:35,535 - pump_anomaly.api - INFO - Labels shape: (842,)
+2025-08-03 16:51:35,540 - pump_anomaly.api - INFO - Scaling features...
+2025-08-03 16:51:35,596 - pump_anomaly.api - INFO - Scaled features shape: (842, 72)
+2025-08-03 16:51:35,597 - pump_anomaly.api - INFO - Evaluating model...
+2025-08-03 16:51:36,075 - pump_anomaly.api - INFO - Model evaluation completed successfully
+2025-08-03 16:51:47,329 - pump_anomaly.api - INFO - Initializing preprocessor...
+2025-08-03 16:51:47,333 - pump_anomaly.api - INFO - Preprocessor initialized. Scaler fitted: True
+2025-08-03 16:51:47,334 - pump_anomaly.api - INFO - Initializing model...
+2025-08-03 16:51:47,648 - pump_anomaly.api - INFO - Model initialized. Model loaded: True
+2025-08-03 16:51:47,649 - pump_anomaly.api - INFO - Pre-trained model loaded successfully.
+2025-08-03 16:51:47,677 - pump_anomaly.api - INFO - Model evaluation requested
+2025-08-03 16:51:47,680 - pump_anomaly.api - INFO - Loading test data from: C:\Users\HP\Desktop\Github_Forks\pump_anomaly_detection\data\test_features.csv
+2025-08-03 16:51:47,739 - pump_anomaly.api - INFO - Test data shape: (842, 75)
+2025-08-03 16:51:47,745 - pump_anomaly.api - INFO - Test data columns: ['file_path', 'label', 'augmented', 'mfcc1_mean', 'mfcc1_std', 'mfcc1_max', 'mfcc1_min', 'mfcc2_mean', 'mfcc2_std', 'mfcc2_max', 'mfcc2_min', 'mfcc3_mean', 'mfcc3_std', 'mfcc3_max', 'mfcc3_min', 'mfcc4_mean', 'mfcc4_std', 'mfcc4_max', 'mfcc4_min', 'mfcc5_mean', 'mfcc5_std', 'mfcc5_max', 'mfcc5_min', 'mfcc6_mean', 'mfcc6_std', 'mfcc6_max', 'mfcc6_min', 'mfcc7_mean', 'mfcc7_std', 'mfcc7_max', 'mfcc7_min', 'mfcc8_mean', 'mfcc8_std', 'mfcc8_max', 'mfcc8_min', 'mfcc9_mean', 'mfcc9_std', 'mfcc9_max', 'mfcc9_min', 'mfcc10_mean', 'mfcc10_std', 'mfcc10_max', 'mfcc10_min', 'mfcc11_mean', 'mfcc11_std', 'mfcc11_max', 'mfcc11_min', 'mfcc12_mean', 'mfcc12_std', 'mfcc12_max', 'mfcc12_min', 'mfcc13_mean', 'mfcc13_std', 'mfcc13_max', 'mfcc13_min', 'spectral_centroid_mean', 'spectral_centroid_std', 'spectral_centroid_max', 'spectral_centroid_min', 'spectral_bandwidth_mean', 'spectral_bandwidth_std', 'spectral_bandwidth_max', 'spectral_bandwidth_min', 'spectral_rolloff_mean', 'spectral_rolloff_std', 'spectral_rolloff_max', 'spectral_rolloff_min', 'zero_crossing_rate_mean', 'zero_crossing_rate_std', 'zero_crossing_rate_max', 'zero_crossing_rate_min', 'rms_mean', 'rms_std', 'rms_max', 'rms_min']
+2025-08-03 16:51:47,762 - pump_anomaly.api - INFO - Feature matrix shape: (842, 72)
+2025-08-03 16:51:47,763 - pump_anomaly.api - INFO - Labels shape: (842,)
+2025-08-03 16:51:47,764 - pump_anomaly.api - INFO - Scaling features...
+2025-08-03 16:51:47,783 - pump_anomaly.api - INFO - Scaled features shape: (842, 72)
+2025-08-03 16:51:47,794 - pump_anomaly.api - INFO - Evaluating model...
+2025-08-03 16:51:48,030 - pump_anomaly.api - INFO - Model evaluation completed successfully
+2025-08-03 16:52:17,158 - pump_anomaly.api - INFO - Prediction request received: audio.wav
+2025-08-03 16:52:17,158 - pump_anomaly.api - INFO - Saving uploaded file...
+2025-08-03 16:52:17,266 - pump_anomaly.api - INFO - File saved in 0.11 seconds
+2025-08-03 16:52:17,404 - pump_anomaly.api - INFO - Extracting features...
+2025-08-03 16:53:52,541 - pump_anomaly.api - INFO - Features extracted in 95.28 seconds
+2025-08-03 16:53:52,541 - pump_anomaly.api - INFO - Feature shape: (1, 72)
+2025-08-03 16:53:52,542 - pump_anomaly.api - INFO - Scaling features...
+2025-08-03 16:53:52,585 - pump_anomaly.api - INFO - Features scaled in 0.04 seconds
+2025-08-03 16:53:52,585 - pump_anomaly.api - INFO - Making prediction...
+2025-08-03 16:53:52,665 - pump_anomaly.api - INFO - Prediction made in 0.08 seconds
+2025-08-03 16:53:52,666 - pump_anomaly.api - INFO - Total prediction time: 95.51 seconds
+2025-08-03 16:53:52,668 - pump_anomaly.api - INFO - Temporary file cleaned up
+2025-08-03 16:53:52,671 - pump_anomaly.api - INFO - Model info requested
+2025-08-03 16:54:32,297 - pump_anomaly.api - INFO - Initializing preprocessor...
+2025-08-03 16:54:32,299 - pump_anomaly.api - INFO - Preprocessor initialized. Scaler fitted: True
+2025-08-03 16:54:32,300 - pump_anomaly.api - INFO - Initializing model...
+2025-08-03 16:54:32,536 - pump_anomaly.api - INFO - Model initialized. Model loaded: True
+2025-08-03 16:54:32,536 - pump_anomaly.api - INFO - Pre-trained model loaded successfully.
+2025-08-03 16:54:52,017 - pump_anomaly.api - INFO - Model info requested
+2025-08-03 16:54:54,217 - pump_anomaly.api - INFO - Model evaluation requested
+2025-08-03 16:54:54,218 - pump_anomaly.api - INFO - Loading test data from: C:\Users\HP\Desktop\Github_Forks\pump_anomaly_detection\data\test_features.csv
+2025-08-03 16:54:54,249 - pump_anomaly.api - INFO - Test data shape: (842, 75)
+2025-08-03 16:54:54,250 - pump_anomaly.api - INFO - Test data columns: ['file_path', 'label', 'augmented', 'mfcc1_mean', 'mfcc1_std', 'mfcc1_max', 'mfcc1_min', 'mfcc2_mean', 'mfcc2_std', 'mfcc2_max', 'mfcc2_min', 'mfcc3_mean', 'mfcc3_std', 'mfcc3_max', 'mfcc3_min', 'mfcc4_mean', 'mfcc4_std', 'mfcc4_max', 'mfcc4_min', 'mfcc5_mean', 'mfcc5_std', 'mfcc5_max', 'mfcc5_min', 'mfcc6_mean', 'mfcc6_std', 'mfcc6_max', 'mfcc6_min', 'mfcc7_mean', 'mfcc7_std', 'mfcc7_max', 'mfcc7_min', 'mfcc8_mean', 'mfcc8_std', 'mfcc8_max', 'mfcc8_min', 'mfcc9_mean', 'mfcc9_std', 'mfcc9_max', 'mfcc9_min', 'mfcc10_mean', 'mfcc10_std', 'mfcc10_max', 'mfcc10_min', 'mfcc11_mean', 'mfcc11_std', 'mfcc11_max', 'mfcc11_min', 'mfcc12_mean', 'mfcc12_std', 'mfcc12_max', 'mfcc12_min', 'mfcc13_mean', 'mfcc13_std', 'mfcc13_max', 'mfcc13_min', 'spectral_centroid_mean', 'spectral_centroid_std', 'spectral_centroid_max', 'spectral_centroid_min', 'spectral_bandwidth_mean', 'spectral_bandwidth_std', 'spectral_bandwidth_max', 'spectral_bandwidth_min', 'spectral_rolloff_mean', 'spectral_rolloff_std', 'spectral_rolloff_max', 'spectral_rolloff_min', 'zero_crossing_rate_mean', 'zero_crossing_rate_std', 'zero_crossing_rate_max', 'zero_crossing_rate_min', 'rms_mean', 'rms_std', 'rms_max', 'rms_min']
+2025-08-03 16:54:54,255 - pump_anomaly.api - INFO - Feature matrix shape: (842, 72)
+2025-08-03 16:54:54,256 - pump_anomaly.api - INFO - Labels shape: (842,)
+2025-08-03 16:54:54,257 - pump_anomaly.api - INFO - Scaling features...
+2025-08-03 16:54:54,263 - pump_anomaly.api - INFO - Scaled features shape: (842, 72)
+2025-08-03 16:54:54,263 - pump_anomaly.api - INFO - Evaluating model...
+2025-08-03 16:54:54,468 - pump_anomaly.api - INFO - Model evaluation completed successfully
+2025-08-03 16:54:56,667 - pump_anomaly.api - INFO - Model evaluation requested
+2025-08-03 16:54:56,667 - pump_anomaly.api - INFO - Loading test data from: C:\Users\HP\Desktop\Github_Forks\pump_anomaly_detection\data\test_features.csv
+2025-08-03 16:54:56,699 - pump_anomaly.api - INFO - Test data shape: (842, 75)
+2025-08-03 16:54:56,700 - pump_anomaly.api - INFO - Test data columns: ['file_path', 'label', 'augmented', 'mfcc1_mean', 'mfcc1_std', 'mfcc1_max', 'mfcc1_min', 'mfcc2_mean', 'mfcc2_std', 'mfcc2_max', 'mfcc2_min', 'mfcc3_mean', 'mfcc3_std', 'mfcc3_max', 'mfcc3_min', 'mfcc4_mean', 'mfcc4_std', 'mfcc4_max', 'mfcc4_min', 'mfcc5_mean', 'mfcc5_std', 'mfcc5_max', 'mfcc5_min', 'mfcc6_mean', 'mfcc6_std', 'mfcc6_max', 'mfcc6_min', 'mfcc7_mean', 'mfcc7_std', 'mfcc7_max', 'mfcc7_min', 'mfcc8_mean', 'mfcc8_std', 'mfcc8_max', 'mfcc8_min', 'mfcc9_mean', 'mfcc9_std', 'mfcc9_max', 'mfcc9_min', 'mfcc10_mean', 'mfcc10_std', 'mfcc10_max', 'mfcc10_min', 'mfcc11_mean', 'mfcc11_std', 'mfcc11_max', 'mfcc11_min', 'mfcc12_mean', 'mfcc12_std', 'mfcc12_max', 'mfcc12_min', 'mfcc13_mean', 'mfcc13_std', 'mfcc13_max', 'mfcc13_min', 'spectral_centroid_mean', 'spectral_centroid_std', 'spectral_centroid_max', 'spectral_centroid_min', 'spectral_bandwidth_mean', 'spectral_bandwidth_std', 'spectral_bandwidth_max', 'spectral_bandwidth_min', 'spectral_rolloff_mean', 'spectral_rolloff_std', 'spectral_rolloff_max', 'spectral_rolloff_min', 'zero_crossing_rate_mean', 'zero_crossing_rate_std', 'zero_crossing_rate_max', 'zero_crossing_rate_min', 'rms_mean', 'rms_std', 'rms_max', 'rms_min']
+2025-08-03 16:54:56,705 - pump_anomaly.api - INFO - Feature matrix shape: (842, 72)
+2025-08-03 16:54:56,706 - pump_anomaly.api - INFO - Labels shape: (842,)
+2025-08-03 16:54:56,707 - pump_anomaly.api - INFO - Scaling features...
+2025-08-03 16:54:56,712 - pump_anomaly.api - INFO - Scaled features shape: (842, 72)
+2025-08-03 16:54:56,713 - pump_anomaly.api - INFO - Evaluating model...
+2025-08-03 16:54:56,898 - pump_anomaly.api - INFO - Model evaluation completed successfully
+2025-08-03 16:56:10,959 - pump_anomaly.api - INFO - Prediction request received: audio.wav
+2025-08-03 16:56:11,231 - pump_anomaly.api - INFO - Saving uploaded file...
+2025-08-03 16:56:11,236 - pump_anomaly.api - INFO - File saved in 0.01 seconds
+2025-08-03 16:56:11,238 - pump_anomaly.api - INFO - Extracting features...
+2025-08-03 16:57:02,768 - pump_anomaly.api - INFO - Features extracted in 51.53 seconds
+2025-08-03 16:57:02,770 - pump_anomaly.api - INFO - Feature shape: (1, 72)
+2025-08-03 16:57:02,771 - pump_anomaly.api - INFO - Scaling features...
+2025-08-03 16:57:03,223 - pump_anomaly.api - INFO - Features scaled in 0.45 seconds
+2025-08-03 16:57:03,326 - pump_anomaly.api - INFO - Making prediction...
+2025-08-03 16:57:03,673 - pump_anomaly.api - INFO - Prediction made in 0.45 seconds
+2025-08-03 16:57:03,737 - pump_anomaly.api - INFO - Total prediction time: 52.51 seconds
+2025-08-03 16:57:03,750 - pump_anomaly.api - INFO - Temporary file cleaned up
+2025-08-03 16:59:24,408 - pump_anomaly.api - INFO - Initializing preprocessor...
+2025-08-03 16:59:24,420 - pump_anomaly.api - INFO - Preprocessor initialized. Scaler fitted: True
+2025-08-03 16:59:24,422 - pump_anomaly.api - INFO - Initializing model...
+2025-08-03 16:59:24,849 - pump_anomaly.api - INFO - Model initialized. Model loaded: True
+2025-08-03 16:59:24,850 - pump_anomaly.api - INFO - Pre-trained model loaded successfully.
+2025-08-03 16:59:38,067 - pump_anomaly.api - INFO - Initializing preprocessor...
+2025-08-03 16:59:38,069 - pump_anomaly.api - INFO - Preprocessor initialized. Scaler fitted: True
+2025-08-03 16:59:38,070 - pump_anomaly.api - INFO - Initializing model...
+2025-08-03 16:59:38,298 - pump_anomaly.api - INFO - Model initialized. Model loaded: True
+2025-08-03 16:59:38,298 - pump_anomaly.api - INFO - Pre-trained model loaded successfully.
+2025-08-03 17:00:30,576 - pump_anomaly.api - INFO - Initializing preprocessor...
+2025-08-03 17:00:30,579 - pump_anomaly.api - INFO - Preprocessor initialized. Scaler fitted: True
+2025-08-03 17:00:30,584 - pump_anomaly.api - INFO - Initializing model...
+2025-08-03 17:00:30,979 - pump_anomaly.api - INFO - Model initialized. Model loaded: True
+2025-08-03 17:00:30,988 - pump_anomaly.api - INFO - Pre-trained model loaded successfully.
+2025-08-03 17:02:16,935 - pump_anomaly.api - INFO - Initializing preprocessor...
+2025-08-03 17:02:16,940 - pump_anomaly.api - INFO - Preprocessor initialized. Scaler fitted: True
+2025-08-03 17:02:16,942 - pump_anomaly.api - INFO - Initializing model...
+2025-08-03 17:02:17,261 - pump_anomaly.api - INFO - Model initialized. Model loaded: True
+2025-08-03 17:02:17,272 - pump_anomaly.api - INFO - Pre-trained model loaded successfully.
+2025-08-03 17:02:59,581 - pump_anomaly.api - INFO - Initializing preprocessor...
+2025-08-03 17:02:59,586 - pump_anomaly.api - INFO - Preprocessor initialized. Scaler fitted: True
+2025-08-03 17:02:59,606 - pump_anomaly.api - INFO - Initializing model...
+2025-08-03 17:03:00,138 - pump_anomaly.api - INFO - Model initialized. Model loaded: True
+2025-08-03 17:03:00,146 - pump_anomaly.api - INFO - Pre-trained model loaded successfully.
+2025-08-03 17:03:20,958 - pump_anomaly.api - INFO - Initializing preprocessor...
+2025-08-03 17:03:21,603 - pump_anomaly.api - INFO - Preprocessor initialized. Scaler fitted: True
+2025-08-03 17:03:21,799 - pump_anomaly.api - INFO - Initializing model...
+2025-08-03 17:03:22,632 - pump_anomaly.api - INFO - Model initialized. Model loaded: True
+2025-08-03 17:03:22,848 - pump_anomaly.api - INFO - Pre-trained model loaded successfully.
+2025-08-03 17:03:27,054 - pump_anomaly.api - INFO - Model info requested
+2025-08-03 17:03:29,112 - pump_anomaly.api - INFO - Model evaluation requested
+2025-08-03 17:03:29,114 - pump_anomaly.api - INFO - Loading test data from: C:\Users\HP\Desktop\Github_Forks\pump_anomaly_detection\data\test_features.csv
+2025-08-03 17:03:29,167 - pump_anomaly.api - INFO - Test data shape: (842, 75)
+2025-08-03 17:03:29,170 - pump_anomaly.api - INFO - Test data columns: ['file_path', 'label', 'augmented', 'mfcc1_mean', 'mfcc1_std', 'mfcc1_max', 'mfcc1_min', 'mfcc2_mean', 'mfcc2_std', 'mfcc2_max', 'mfcc2_min', 'mfcc3_mean', 'mfcc3_std', 'mfcc3_max', 'mfcc3_min', 'mfcc4_mean', 'mfcc4_std', 'mfcc4_max', 'mfcc4_min', 'mfcc5_mean', 'mfcc5_std', 'mfcc5_max', 'mfcc5_min', 'mfcc6_mean', 'mfcc6_std', 'mfcc6_max', 'mfcc6_min', 'mfcc7_mean', 'mfcc7_std', 'mfcc7_max', 'mfcc7_min', 'mfcc8_mean', 'mfcc8_std', 'mfcc8_max', 'mfcc8_min', 'mfcc9_mean', 'mfcc9_std', 'mfcc9_max', 'mfcc9_min', 'mfcc10_mean', 'mfcc10_std', 'mfcc10_max', 'mfcc10_min', 'mfcc11_mean', 'mfcc11_std', 'mfcc11_max', 'mfcc11_min', 'mfcc12_mean', 'mfcc12_std', 'mfcc12_max', 'mfcc12_min', 'mfcc13_mean', 'mfcc13_std', 'mfcc13_max', 'mfcc13_min', 'spectral_centroid_mean', 'spectral_centroid_std', 'spectral_centroid_max', 'spectral_centroid_min', 'spectral_bandwidth_mean', 'spectral_bandwidth_std', 'spectral_bandwidth_max', 'spectral_bandwidth_min', 'spectral_rolloff_mean', 'spectral_rolloff_std', 'spectral_rolloff_max', 'spectral_rolloff_min', 'zero_crossing_rate_mean', 'zero_crossing_rate_std', 'zero_crossing_rate_max', 'zero_crossing_rate_min', 'rms_mean', 'rms_std', 'rms_max', 'rms_min']
+2025-08-03 17:03:29,175 - pump_anomaly.api - INFO - Feature matrix shape: (842, 72)
+2025-08-03 17:03:29,176 - pump_anomaly.api - INFO - Labels shape: (842,)
+2025-08-03 17:03:29,179 - pump_anomaly.api - INFO - Scaling features...
+2025-08-03 17:03:29,188 - pump_anomaly.api - INFO - Scaled features shape: (842, 72)
+2025-08-03 17:03:29,189 - pump_anomaly.api - INFO - Evaluating model...
+2025-08-03 17:03:29,466 - pump_anomaly.api - INFO - Model evaluation completed successfully
+2025-08-03 17:03:31,745 - pump_anomaly.api - INFO - Model evaluation requested
+2025-08-03 17:03:31,746 - pump_anomaly.api - INFO - Loading test data from: C:\Users\HP\Desktop\Github_Forks\pump_anomaly_detection\data\test_features.csv
+2025-08-03 17:03:31,787 - pump_anomaly.api - INFO - Test data shape: (842, 75)
+2025-08-03 17:03:31,789 - pump_anomaly.api - INFO - Test data columns: ['file_path', 'label', 'augmented', 'mfcc1_mean', 'mfcc1_std', 'mfcc1_max', 'mfcc1_min', 'mfcc2_mean', 'mfcc2_std', 'mfcc2_max', 'mfcc2_min', 'mfcc3_mean', 'mfcc3_std', 'mfcc3_max', 'mfcc3_min', 'mfcc4_mean', 'mfcc4_std', 'mfcc4_max', 'mfcc4_min', 'mfcc5_mean', 'mfcc5_std', 'mfcc5_max', 'mfcc5_min', 'mfcc6_mean', 'mfcc6_std', 'mfcc6_max', 'mfcc6_min', 'mfcc7_mean', 'mfcc7_std', 'mfcc7_max', 'mfcc7_min', 'mfcc8_mean', 'mfcc8_std', 'mfcc8_max', 'mfcc8_min', 'mfcc9_mean', 'mfcc9_std', 'mfcc9_max', 'mfcc9_min', 'mfcc10_mean', 'mfcc10_std', 'mfcc10_max', 'mfcc10_min', 'mfcc11_mean', 'mfcc11_std', 'mfcc11_max', 'mfcc11_min', 'mfcc12_mean', 'mfcc12_std', 'mfcc12_max', 'mfcc12_min', 'mfcc13_mean', 'mfcc13_std', 'mfcc13_max', 'mfcc13_min', 'spectral_centroid_mean', 'spectral_centroid_std', 'spectral_centroid_max', 'spectral_centroid_min', 'spectral_bandwidth_mean', 'spectral_bandwidth_std', 'spectral_bandwidth_max', 'spectral_bandwidth_min', 'spectral_rolloff_mean', 'spectral_rolloff_std', 'spectral_rolloff_max', 'spectral_rolloff_min', 'zero_crossing_rate_mean', 'zero_crossing_rate_std', 'zero_crossing_rate_max', 'zero_crossing_rate_min', 'rms_mean', 'rms_std', 'rms_max', 'rms_min']
+2025-08-03 17:03:31,823 - pump_anomaly.api - INFO - Feature matrix shape: (842, 72)
+2025-08-03 17:03:31,826 - pump_anomaly.api - INFO - Labels shape: (842,)
+2025-08-03 17:03:31,846 - pump_anomaly.api - INFO - Scaling features...
+2025-08-03 17:03:31,856 - pump_anomaly.api - INFO - Scaled features shape: (842, 72)
+2025-08-03 17:03:31,858 - pump_anomaly.api - INFO - Evaluating model...
+2025-08-03 17:03:32,172 - pump_anomaly.api - INFO - Model evaluation completed successfully
+2025-08-03 17:05:32,737 - pump_anomaly.api - INFO - Prediction request received: audio.wav
+2025-08-03 17:05:32,737 - pump_anomaly.api - INFO - Saving uploaded file...
+2025-08-03 17:05:32,741 - pump_anomaly.api - INFO - File saved in 0.00 seconds
+2025-08-03 17:05:32,741 - pump_anomaly.api - INFO - Extracting features...
+2025-08-03 17:06:12,980 - pump_anomaly.api - INFO - Features extracted in 40.24 seconds
+2025-08-03 17:06:12,980 - pump_anomaly.api - INFO - Feature shape: (1, 72)
+2025-08-03 17:06:12,981 - pump_anomaly.api - INFO - Scaling features...
+2025-08-03 17:06:12,990 - pump_anomaly.api - INFO - Features scaled in 0.01 seconds
+2025-08-03 17:06:12,991 - pump_anomaly.api - INFO - Making prediction...
+2025-08-03 17:06:13,058 - pump_anomaly.api - INFO - Prediction made in 0.07 seconds
+2025-08-03 17:06:13,058 - pump_anomaly.api - INFO - Total prediction time: 40.32 seconds
+2025-08-03 17:06:13,060 - pump_anomaly.api - INFO - Temporary file cleaned up
+2025-08-03 17:07:17,890 - pump_anomaly.api - INFO - Retrain request received: 30 files
+2025-08-03 17:07:56,193 - pump_anomaly.api - INFO - Model info requested
+2025-08-03 17:07:58,237 - pump_anomaly.api - INFO - Model evaluation requested
+2025-08-03 17:07:58,238 - pump_anomaly.api - INFO - Loading test data from: C:\Users\HP\Desktop\Github_Forks\pump_anomaly_detection\data\test_features.csv
+2025-08-03 17:07:58,284 - pump_anomaly.api - INFO - Test data shape: (842, 75)
+2025-08-03 17:07:58,285 - pump_anomaly.api - INFO - Test data columns: ['file_path', 'label', 'augmented', 'mfcc1_mean', 'mfcc1_std', 'mfcc1_max', 'mfcc1_min', 'mfcc2_mean', 'mfcc2_std', 'mfcc2_max', 'mfcc2_min', 'mfcc3_mean', 'mfcc3_std', 'mfcc3_max', 'mfcc3_min', 'mfcc4_mean', 'mfcc4_std', 'mfcc4_max', 'mfcc4_min', 'mfcc5_mean', 'mfcc5_std', 'mfcc5_max', 'mfcc5_min', 'mfcc6_mean', 'mfcc6_std', 'mfcc6_max', 'mfcc6_min', 'mfcc7_mean', 'mfcc7_std', 'mfcc7_max', 'mfcc7_min', 'mfcc8_mean', 'mfcc8_std', 'mfcc8_max', 'mfcc8_min', 'mfcc9_mean', 'mfcc9_std', 'mfcc9_max', 'mfcc9_min', 'mfcc10_mean', 'mfcc10_std', 'mfcc10_max', 'mfcc10_min', 'mfcc11_mean', 'mfcc11_std', 'mfcc11_max', 'mfcc11_min', 'mfcc12_mean', 'mfcc12_std', 'mfcc12_max', 'mfcc12_min', 'mfcc13_mean', 'mfcc13_std', 'mfcc13_max', 'mfcc13_min', 'spectral_centroid_mean', 'spectral_centroid_std', 'spectral_centroid_max', 'spectral_centroid_min', 'spectral_bandwidth_mean', 'spectral_bandwidth_std', 'spectral_bandwidth_max', 'spectral_bandwidth_min', 'spectral_rolloff_mean', 'spectral_rolloff_std', 'spectral_rolloff_max', 'spectral_rolloff_min', 'zero_crossing_rate_mean', 'zero_crossing_rate_std', 'zero_crossing_rate_max', 'zero_crossing_rate_min', 'rms_mean', 'rms_std', 'rms_max', 'rms_min']
+2025-08-03 17:07:58,324 - pump_anomaly.api - INFO - Feature matrix shape: (842, 72)
+2025-08-03 17:07:58,338 - pump_anomaly.api - INFO - Labels shape: (842,)
+2025-08-03 17:07:58,345 - pump_anomaly.api - INFO - Scaling features...
+2025-08-03 17:07:58,360 - pump_anomaly.api - INFO - Scaled features shape: (842, 72)
+2025-08-03 17:07:58,361 - pump_anomaly.api - INFO - Evaluating model...
+2025-08-03 17:07:58,475 - pump_anomaly.api - INFO - Model evaluation completed successfully
+2025-08-03 17:08:00,838 - pump_anomaly.api - INFO - Model evaluation requested
+2025-08-03 17:08:00,839 - pump_anomaly.api - INFO - Loading test data from: C:\Users\HP\Desktop\Github_Forks\pump_anomaly_detection\data\test_features.csv
+2025-08-03 17:08:00,867 - pump_anomaly.api - INFO - Test data shape: (842, 75)
+2025-08-03 17:08:00,868 - pump_anomaly.api - INFO - Test data columns: ['file_path', 'label', 'augmented', 'mfcc1_mean', 'mfcc1_std', 'mfcc1_max', 'mfcc1_min', 'mfcc2_mean', 'mfcc2_std', 'mfcc2_max', 'mfcc2_min', 'mfcc3_mean', 'mfcc3_std', 'mfcc3_max', 'mfcc3_min', 'mfcc4_mean', 'mfcc4_std', 'mfcc4_max', 'mfcc4_min', 'mfcc5_mean', 'mfcc5_std', 'mfcc5_max', 'mfcc5_min', 'mfcc6_mean', 'mfcc6_std', 'mfcc6_max', 'mfcc6_min', 'mfcc7_mean', 'mfcc7_std', 'mfcc7_max', 'mfcc7_min', 'mfcc8_mean', 'mfcc8_std', 'mfcc8_max', 'mfcc8_min', 'mfcc9_mean', 'mfcc9_std', 'mfcc9_max', 'mfcc9_min', 'mfcc10_mean', 'mfcc10_std', 'mfcc10_max', 'mfcc10_min', 'mfcc11_mean', 'mfcc11_std', 'mfcc11_max', 'mfcc11_min', 'mfcc12_mean', 'mfcc12_std', 'mfcc12_max', 'mfcc12_min', 'mfcc13_mean', 'mfcc13_std', 'mfcc13_max', 'mfcc13_min', 'spectral_centroid_mean', 'spectral_centroid_std', 'spectral_centroid_max', 'spectral_centroid_min', 'spectral_bandwidth_mean', 'spectral_bandwidth_std', 'spectral_bandwidth_max', 'spectral_bandwidth_min', 'spectral_rolloff_mean', 'spectral_rolloff_std', 'spectral_rolloff_max', 'spectral_rolloff_min', 'zero_crossing_rate_mean', 'zero_crossing_rate_std', 'zero_crossing_rate_max', 'zero_crossing_rate_min', 'rms_mean', 'rms_std', 'rms_max', 'rms_min']
+2025-08-03 17:08:00,871 - pump_anomaly.api - INFO - Feature matrix shape: (842, 72)
+2025-08-03 17:08:00,872 - pump_anomaly.api - INFO - Labels shape: (842,)
+2025-08-03 17:08:00,873 - pump_anomaly.api - INFO - Scaling features...
+2025-08-03 17:08:00,880 - pump_anomaly.api - INFO - Scaled features shape: (842, 72)
+2025-08-03 17:08:00,881 - pump_anomaly.api - INFO - Evaluating model...
+2025-08-03 17:08:00,941 - pump_anomaly.api - INFO - Model evaluation completed successfully

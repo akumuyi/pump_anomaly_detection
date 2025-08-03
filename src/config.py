@@ -4,6 +4,18 @@ from pathlib import Path
 # Base directory
 BASE_DIR = Path(__file__).parent.parent
 
+# Load .env file if it exists
+env_file = BASE_DIR / '.env'
+if env_file.exists():
+    with open(env_file, 'r') as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith('#') and '=' in line:
+                key, value = line.split('=', 1)
+                # Only set if not already in environment
+                if key.strip() not in os.environ:
+                    os.environ[key.strip()] = value.strip()
+
 # Environment
 ENVIRONMENT = os.environ.get("ENVIRONMENT", "development")
 IS_PRODUCTION = ENVIRONMENT == "production"

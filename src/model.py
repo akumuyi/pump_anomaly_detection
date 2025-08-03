@@ -4,11 +4,17 @@ import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix
 from datetime import datetime
+from pathlib import Path
 
 class PumpAnomalyDetector:
-    def __init__(self, model_dir='../models'):
+    def __init__(self, model_dir=None):
         """Initialize the model with path to model directory."""
-        self.model_dir = model_dir
+        if model_dir is None:
+            # Use absolute path relative to this file
+            project_root = Path(__file__).parent.parent
+            self.model_dir = str(project_root / 'models')
+        else:
+            self.model_dir = model_dir
         self.model = None
         self.threshold = 0.5  # Default threshold for anomaly detection
         self._load_model()

@@ -4,7 +4,7 @@ from fastapi import Depends, HTTPException, Security
 from fastapi.security import APIKeyHeader
 from fastapi.security.utils import get_authorization_scheme_param
 from jose import JWTError, jwt
-from . import config
+from src import config
 
 # API Key security scheme
 api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)

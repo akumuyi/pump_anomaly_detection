@@ -8,8 +8,22 @@ import os
 import time
 import requests
 import json
+import sys
+from pathlib import Path
+
+# Add project root to Python path
+project_root = str(Path(__file__).parent.parent)
+if project_root not in sys.path:
+    sys.path.append(project_root)
+
+# Add src directory to Python path as well
+src_dir = str(Path(__file__).parent)
+if src_dir not in sys.path:
+    sys.path.append(src_dir)
+
 from model import PumpAnomalyDetector
 from preprocessing import AudioPreprocessor
+import config
 import librosa
 import librosa.display
 import matplotlib.pyplot as plt
@@ -23,7 +37,7 @@ preprocessor = AudioPreprocessor()
 
 # FastAPI endpoint
 API_URL = os.environ.get('API_URL', 'http://localhost:8000')
-API_KEY = os.environ.get('API_KEY', None)
+API_KEY = os.environ.get('API_KEY', config.API_KEY)  # Get from config if not in env
 HEADERS = {"X-API-Key": API_KEY} if API_KEY else {}
 
 # Storage configuration
@@ -54,9 +68,9 @@ def fetch_s3_file(s3_path, local_path):
 
 def get_model_uptime():
     """Calculate model uptime based on file modification time."""
-    model_path = os.path.join('../models', 'random_forest_model.pkl')
-    if os.path.exists(model_path):
-        mod_time = datetime.fromtimestamp(os.path.getmtime(model_path))
+    model_path = Path(project_root) / 'models' / 'random_forest_model.pkl'
+    if model_path.exists():
+        mod_time = datetime.fromtimestamp(model_path.stat().st_mtime)
         uptime = datetime.now() - mod_time
         return uptime
     return None
@@ -103,8 +117,8 @@ def plot_metrics_history():
         local_metrics_path = '/tmp/metrics_history.csv'
         metrics_file = fetch_s3_file(s3_metrics_path, local_metrics_path)
     else:
-        metrics_file = os.path.join('../data', 'metrics_history.csv')
-    if not metrics_file or not os.path.exists(metrics_file):
+        metrics_file = str(Path(project_root) / 'data' / 'metrics_history.csv')
+    if not metrics_file or not Path(metrics_file).exists():
         df = pd.DataFrame(columns=['timestamp', 'accuracy', 'precision', 'recall', 'f1'])
     else:
         df = pd.read_csv(metrics_file)
@@ -112,7 +126,7 @@ def plot_metrics_history():
     
     # Get latest metrics from API
     try:
-        response = requests.get(f"{API_URL}/evaluate/", headers=HEADERS, timeout=15)
+        response = requests.get(f"{API_URL}/evaluate/", headers=HEADERS)
         if response.status_code == 200:
             latest_eval = response.json()
             if 'classification_report' in latest_eval:
@@ -199,7 +213,7 @@ if page == "Model Monitoring":
     
     # Get model info
     try:
-        response = requests.get(f"{API_URL}/model-info/", headers=HEADERS, timeout=10)
+        response = requests.get(f"{API_URL}/model-info/", headers=HEADERS)
         if response.status_code == 200:
             model_info = response.json()
             col2.metric("Model Type", model_info['model_type'])
@@ -215,49 +229,63 @@ if page == "Model Monitoring":
     st.plotly_chart(metrics_fig, use_container_width=True)
     
     # Latest evaluation metrics
-    if hasattr(model, 'model') and model.model is not None:
-        st.subheader("Latest Model Evaluation")
-        try:
-            response = requests.get(f"{API_URL}/evaluate/", headers=HEADERS, timeout=15)
-            if response.status_code == 200:
-                latest_eval = response.json()
+    st.subheader("Latest Model Evaluation")
+    try:
+        response = requests.get(f"{API_URL}/evaluate/", headers=HEADERS)
+        if response.status_code == 200:
+            latest_eval = response.json()
+            
+            # Display classification report if available
+            if 'classification_report' in latest_eval:
+                metrics_df = pd.DataFrame(latest_eval['classification_report']).transpose()
                 
-                # Display classification report if available
-                if 'classification_report' in latest_eval:
-                    metrics_df = pd.DataFrame(latest_eval['classification_report']).transpose()
-                    
-                    # Replace numeric labels with descriptive ones
-                    metrics_df.rename(index={
-                        '0': 'Normal',
-                        '1': 'Abnormal',
-                        'accuracy': 'Accuracy',
-                        'macro avg': 'Macro Avg',
-                        'weighted avg': 'Weighted Avg'
-                    }, inplace=True)
-                    
-                    # Round numeric values to 3 decimal places
-                    numeric_columns = ['precision', 'recall', 'f1-score', 'support']
-                    metrics_df[numeric_columns] = metrics_df[numeric_columns].round(3)
-                    
-                    # Style the dataframe
-                    st.dataframe(
-                        metrics_df,
-                        use_container_width=True,
-                        height=250
-                    )
+                # Replace numeric labels with descriptive ones
+                metrics_df.rename(index={
+                    '0': 'Normal',
+                    '1': 'Abnormal',
+                    'accuracy': 'Accuracy',
+                    'macro avg': 'Macro Avg',
+                    'weighted avg': 'Weighted Avg'
+                }, inplace=True)
                 
-                # Display confusion matrix if available
-                if 'confusion_matrix' in latest_eval:
-                    st.subheader("Confusion Matrix")
-                    cm_fig = plot_confusion_matrix(
-                        latest_eval['confusion_matrix'], 
-                        ['Normal', 'Abnormal']
-                    )
-                    st.plotly_chart(cm_fig, use_container_width=True)
+                # Round numeric values to 3 decimal places
+                numeric_columns = ['precision', 'recall', 'f1-score', 'support']
+                metrics_df[numeric_columns] = metrics_df[numeric_columns].round(3)
+                
+                # Style the dataframe
+                st.dataframe(
+                    metrics_df,
+                    use_container_width=True,
+                    height=250
+                )
+            
+            # Display confusion matrix if available
+            if 'confusion_matrix' in latest_eval:
+                st.subheader("Confusion Matrix")
+                cm_fig = plot_confusion_matrix(
+                    latest_eval['confusion_matrix'], 
+                    ['Normal', 'Abnormal']
+                )
+                st.plotly_chart(cm_fig, use_container_width=True)
+        elif response.status_code == 400:
+            error_detail = response.json().get('detail', 'Unknown error')
+            if "Model not trained" in error_detail:
+                st.info("📋 Model evaluation will be available after the model is trained.")
+            elif "Test data not found" in error_detail:
+                st.warning("⚠️ Test data not found. Please ensure test_features.csv exists in the data directory.")
+            elif "scaler is not fitted" in error_detail:
+                st.warning("⚠️ Model scaler not fitted. Please retrain the model to enable evaluation.")
             else:
-                st.warning(f"API Error: {response.json().get('detail', 'Unknown error')}")
-        except Exception as e:
-            st.warning(f"Could not fetch model evaluation metrics from API: {str(e)}")
+                st.warning(f"⚠️ Evaluation not available: {error_detail}")
+        elif response.status_code == 404:
+            st.warning("⚠️ Test data not found. Please ensure the test dataset is available.")
+        else:
+            error_detail = response.json().get('detail', 'Unknown error') if response.content else 'Server error'
+            st.error(f"❌ API Error: {error_detail}")
+    except requests.exceptions.RequestException as e:
+        st.error(f"❌ Could not connect to the API: {str(e)}")
+    except Exception as e:
+        st.warning(f"⚠️ Could not fetch model evaluation metrics: {str(e)}")
     
     # Feature Analysis Section
     st.header("Feature Analysis")
@@ -266,9 +294,8 @@ if page == "Model Monitoring":
         local_train_path = '/tmp/train_features_augmented.csv'
         train_features = fetch_s3_file(s3_train_path, local_train_path)
     else:
-        data_dir = '../data'
-        train_features = os.path.join(data_dir, 'train_features_augmented.csv')
-    if train_features and os.path.exists(train_features):
+        train_features = str(Path(project_root) / 'data' / 'train_features_augmented.csv')
+    if train_features and Path(train_features).exists():
         df = pd.read_csv(train_features)
         df['Status'] = df['label'].map({0: 'Normal', 1: 'Abnormal'})
         
@@ -377,10 +404,10 @@ if page == "Model Monitoring":
         """)
         
         # Select one normal and one abnormal audio file for comparison
-        normal_audio = '../data/train/normal/normal_00000009.wav'
-        abnormal_audio = '../data/train/abnormal/abnormal_00000024.wav'
+        normal_audio = str(Path(project_root) / 'data' / 'train' / 'normal' / 'normal_00000009.wav')
+        abnormal_audio = str(Path(project_root) / 'data' / 'train' / 'abnormal' / 'abnormal_00000024.wav')
         
-        if os.path.exists(normal_audio) and os.path.exists(abnormal_audio):
+        if Path(normal_audio).exists() and Path(abnormal_audio).exists():
             col1, col2 = st.columns(2)
             with col1:
                 st.write("Normal Pump Spectrogram")
@@ -440,7 +467,7 @@ elif page == "Predictions":
         try:
             with open(temp_path, 'rb') as file_handle:
                 files = {'file': ('audio.wav', file_handle.read(), 'audio/wav')}
-                response = requests.post(f"{API_URL}/predict/", files=files, headers=HEADERS, timeout=30)
+                response = requests.post(f"{API_URL}/predict/", files=files, headers=HEADERS)  # Removed timeout
             
             prediction = response.json()
             
@@ -551,7 +578,7 @@ elif page == "Training":
                 current_step += 1
                 progress_bar.progress(current_step / total_steps)
                 
-                response = requests.post(f"{API_URL}/retrain/", files=files, headers=HEADERS, timeout=120)
+                response = requests.post(f"{API_URL}/retrain/", files=files, headers=HEADERS)  # Removed timeout
                 result = response.json()
                 
                 if response.status_code == 200:
@@ -603,9 +630,9 @@ elif page == "Training":
 
     # Display training history
     st.subheader("Training History")
-    models_dir = '../models'
-    if os.path.exists(models_dir):
-        models = [f for f in os.listdir(models_dir) if f.startswith('random_forest_model')]
+    models_dir = Path(project_root) / 'models'
+    if models_dir.exists():
+        models = [f.name for f in models_dir.glob('random_forest_model*.pkl')]
         if models:
             model_info = []
             for m in models:

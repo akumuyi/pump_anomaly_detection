@@ -7,12 +7,12 @@ from tempfile import NamedTemporaryFile
 from typing import List, Optional
 import numpy as np
 import pandas as pd
-from preprocessing import AudioPreprocessor
-from model import PumpAnomalyDetector
-from security import verify_api_key
-from storage import ModelStorage
-from logging_config import api_logger
-import config
+from src.preprocessing import AudioPreprocessor
+from src.model import PumpAnomalyDetector
+from src.security import verify_api_key
+from src.storage import ModelStorage
+from src.logging_config import api_logger
+from src import config
 
 app = FastAPI(
     title="Pump Anomaly Detection API",
@@ -24,8 +24,23 @@ app = FastAPI(
 storage = ModelStorage()
 
 # Initialize preprocessor and model
-preprocessor = AudioPreprocessor()
-model = PumpAnomalyDetector()
+try:
+    api_logger.info("Initializing preprocessor...")
+    preprocessor = AudioPreprocessor()
+    api_logger.info(f"Preprocessor initialized. Scaler fitted: {preprocessor.scaler is not None}")
+    
+    api_logger.info("Initializing model...")
+    model = PumpAnomalyDetector()
+    api_logger.info(f"Model initialized. Model loaded: {model.model is not None}")
+    
+    if model.model is None:
+        api_logger.warning("No pre-trained model found. Model will need to be trained before use.")
+    else:
+        api_logger.info("Pre-trained model loaded successfully.")
+        
+except Exception as e:
+    api_logger.error(f"Error during initialization: {str(e)}")
+    raise
 
 @app.post("/predict/")
 async def predict(file: UploadFile = File(...), api_key: str = Depends(verify_api_key)):
@@ -42,40 +57,75 @@ async def predict(file: UploadFile = File(...), api_key: str = Depends(verify_ap
     if not file.filename or not file.filename.endswith('.wav'):
         raise HTTPException(status_code=400, detail="Only .wav files are supported")
     
+    # Check if model is loaded
+    if not hasattr(model, 'model') or model.model is None:
+        raise HTTPException(status_code=400, detail="Model not trained. Please train the model first.")
+    
+    temp_path = None
     try:
+        import time
+        start_time = time.time()
+        
         # Save uploaded file temporarily
+        api_logger.info("Saving uploaded file...")
         with NamedTemporaryFile(delete=False, suffix='.wav') as temp_file:
             shutil.copyfileobj(file.file, temp_file)
             temp_path = temp_file.name
         
+        save_time = time.time()
+        api_logger.info(f"File saved in {save_time - start_time:.2f} seconds")
+        
         # Preprocess audio
+        api_logger.info("Extracting features...")
         features = preprocessor.preprocess_audio(temp_path)
         if features is None:
             raise HTTPException(status_code=400, detail="Failed to extract features from audio")
         
+        feature_time = time.time()
+        api_logger.info(f"Features extracted in {feature_time - save_time:.2f} seconds")
+        api_logger.info(f"Feature shape: {features.shape}")
+        
         # Scale features
+        api_logger.info("Scaling features...")
         features_scaled = preprocessor.transform(features)
         
+        scale_time = time.time()
+        api_logger.info(f"Features scaled in {scale_time - feature_time:.2f} seconds")
+        
         # Make prediction
+        api_logger.info("Making prediction...")
         probabilities = model.predict_proba(features_scaled)
         prediction = model.predict(features_scaled)
         
-        # Clean up temp file
-        os.unlink(temp_path)
+        predict_time = time.time()
+        api_logger.info(f"Prediction made in {predict_time - scale_time:.2f} seconds")
         
         # For normal predictions (0), use the probability of class 0
         # For abnormal predictions (1), use the probability of class 1
         pred_class = int(prediction[0])
         confidence = float(probabilities[0][pred_class])
         
+        total_time = time.time()
+        api_logger.info(f"Total prediction time: {total_time - start_time:.2f} seconds")
+        
         return JSONResponse({
             "prediction": "abnormal" if pred_class == 1 else "normal",
             "probability": confidence,
-            "confidence": confidence
+            "confidence": confidence,
+            "processing_time": round(total_time - start_time, 2)
         })
     
     except Exception as e:
+        api_logger.error(f"Error during prediction: {type(e).__name__}: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        # Clean up temp file
+        if temp_path and os.path.exists(temp_path):
+            try:
+                os.unlink(temp_path)
+                api_logger.info("Temporary file cleaned up")
+            except Exception as e:
+                api_logger.warning(f"Failed to clean up temp file: {e}")
 
 @app.post("/retrain/")
 async def retrain(files: List[UploadFile] = File(...), labels: Optional[List[int]] = None, api_key: str = Depends(verify_api_key)):
@@ -116,7 +166,7 @@ async def retrain(files: List[UploadFile] = File(...), labels: Optional[List[int
         
         # Combine features and scale
         X_new = np.vstack(features_list)
-        X_new_scaled = preprocessor.transform(X_new)
+        X_new_scaled = preprocessor.fit_transform(X_new)  # Use fit_transform for retraining
         
         # Use provided labels or extract from filenames
         if labels:
@@ -179,6 +229,26 @@ async def get_model_info(api_key: str = Depends(verify_api_key)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.get("/health/")
+async def health_check():
+    """Health check endpoint."""
+    try:
+        model_status = "loaded" if hasattr(model, 'model') and model.model is not None else "not loaded"
+        scaler_status = "fitted" if preprocessor.scaler is not None else "not fitted"
+        
+        return JSONResponse({
+            "status": "healthy",
+            "model_status": model_status,
+            "scaler_status": scaler_status,
+            "timestamp": str(pd.Timestamp.now())
+        })
+    except Exception as e:
+        return JSONResponse({
+            "status": "unhealthy",
+            "error": str(e),
+            "timestamp": str(pd.Timestamp.now())
+        })
+
 @app.get("/evaluate/")
 async def evaluate(api_key: str = Depends(verify_api_key)):
     api_logger.info("Model evaluation requested")
@@ -188,21 +258,49 @@ async def evaluate(api_key: str = Depends(verify_api_key)):
             raise HTTPException(status_code=400, detail="Model not trained")
             
         # Get latest test data from saved files
-        data_dir = '../data'
+        data_dir = os.path.join(config.BASE_DIR, 'data')
         test_features = os.path.join(data_dir, 'test_features.csv')
         
         if not os.path.exists(test_features):
+            api_logger.error(f"Test data file not found at: {test_features}")
             raise HTTPException(status_code=404, detail="Test data not found")
             
         # Load test data
+        api_logger.info(f"Loading test data from: {test_features}")
         test_df = pd.read_csv(test_features)
-        X_test = test_df.drop(['file_path', 'label', 'augmented'], axis=1)
+        api_logger.info(f"Test data shape: {test_df.shape}")
+        api_logger.info(f"Test data columns: {list(test_df.columns)}")
+        
+        # Check if required columns exist
+        required_columns = ['file_path', 'label']
+        missing_columns = [col for col in required_columns if col not in test_df.columns]
+        if missing_columns:
+            api_logger.error(f"Missing required columns: {missing_columns}")
+            raise HTTPException(status_code=400, detail=f"Missing required columns: {missing_columns}")
+        
+        # Drop metadata columns
+        drop_columns = ['file_path', 'label']
+        if 'augmented' in test_df.columns:
+            drop_columns.append('augmented')
+            
+        X_test = test_df.drop(drop_columns, axis=1)
         y_test = test_df['label']
         
+        api_logger.info(f"Feature matrix shape: {X_test.shape}")
+        api_logger.info(f"Labels shape: {y_test.shape}")
+        
+        # Check if scaler is fitted
+        if preprocessor.scaler is None:
+            api_logger.error("Preprocessor scaler is not fitted")
+            raise HTTPException(status_code=400, detail="Preprocessor scaler is not fitted. Please retrain the model first.")
+        
         # Scale features
+        api_logger.info("Scaling features...")
         X_test_scaled = preprocessor.transform(X_test)
+        api_logger.info(f"Scaled features shape: {X_test_scaled.shape}")
         
         # Get evaluation metrics
+        api_logger.info("Evaluating model...")
         eval_results = model.evaluate(X_test_scaled, y_test)
         
         # Convert numpy arrays to lists for JSON serialization
@@ -212,10 +310,23 @@ async def evaluate(api_key: str = Depends(verify_api_key)):
             'probabilities': eval_results['probabilities'].tolist() if isinstance(eval_results['probabilities'], np.ndarray) else eval_results['probabilities']
         }
         
+        api_logger.info("Model evaluation completed successfully")
         return JSONResponse(serializable_results)
         
+    except HTTPException as he:
+        api_logger.error(f"HTTP Exception during model evaluation: {he.detail}")
+        raise he
+    except FileNotFoundError as fe:
+        api_logger.error(f"File not found during model evaluation: {str(fe)}")
+        raise HTTPException(status_code=404, detail=f"File not found: {str(fe)}")
+    except ValueError as ve:
+        api_logger.error(f"Value error during model evaluation: {str(ve)}")
+        raise HTTPException(status_code=400, detail=f"Value error: {str(ve)}")
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        api_logger.error(f"Unexpected error during model evaluation: {type(e).__name__}: {str(e)}")
+        import traceback
+        api_logger.error(f"Traceback: {traceback.format_exc()}")
+        raise HTTPException(status_code=500, detail=f"{type(e).__name__}: {str(e)}")
 
 if __name__ == "__main__":
     uvicorn.run("prediction:app", host="0.0.0.0", port=8000, reload=True)

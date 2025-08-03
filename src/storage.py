@@ -2,7 +2,7 @@ import os
 import boto3
 import joblib
 from datetime import datetime
-from . import config
+from src import config
 
 class ModelStorage:
     def __init__(self):

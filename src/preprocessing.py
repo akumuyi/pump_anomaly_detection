@@ -5,6 +5,7 @@ from scipy import signal
 import random
 from sklearn.preprocessing import StandardScaler
 import joblib
+from pathlib import Path
 
 def add_noise(y, noise_level=0.005):
     """Add random noise to the audio signal."""
@@ -63,9 +64,10 @@ def augment_audio(y, sr):
     return augmentations
 
 def extract_features(audio_file, augment=False):
-    """Extract audio features from a file."""
+    """Extract audio features from a file with fast processing."""
     try:
-        y, sr = librosa.load(audio_file, sr=None)
+        # Load audio with very fast settings - reduced duration and lower sample rate
+        y, sr = librosa.load(audio_file, sr=8000, duration=5.0, offset=2.0)  # Much faster settings
         features_list = []
         
         # Extract features for original audio
@@ -73,7 +75,7 @@ def extract_features(audio_file, augment=False):
         if features:
             features_list.append(features)
         
-        # Extract features for augmented versions if augment=True
+        # Skip augmentation for prediction to save time
         if augment:
             augmentations = augment_audio(y, sr)
             for aug_y in augmentations:
@@ -87,14 +89,19 @@ def extract_features(audio_file, augment=False):
         return []
 
 def extract_single_features(y, sr, file_path, augmented=False):
-    """Extract features from a single audio signal."""
+    """Extract features from a single audio signal with very fast settings."""
     try:
-        mfccs = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=13)
-        spectral_centroid = librosa.feature.spectral_centroid(y=y, sr=sr)[0]
-        spectral_bandwidth = librosa.feature.spectral_bandwidth(y=y, sr=sr)[0]
-        spectral_rolloff = librosa.feature.spectral_rolloff(y=y, sr=sr)[0]
-        zero_crossing_rate = librosa.feature.zero_crossing_rate(y)[0]
-        rms = librosa.feature.rms(y=y)[0]
+        # Use much faster FFT settings for speed
+        hop_length = 2048  # Larger hop for speed
+        n_fft = 2048      # Smaller FFT for speed
+        
+        # MFCC features (reduced for speed)
+        mfccs = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=13, hop_length=hop_length, n_fft=n_fft, n_mels=20)
+        spectral_centroid = librosa.feature.spectral_centroid(y=y, sr=sr, hop_length=hop_length, n_fft=n_fft)[0]
+        spectral_bandwidth = librosa.feature.spectral_bandwidth(y=y, sr=sr, hop_length=hop_length, n_fft=n_fft)[0]
+        spectral_rolloff = librosa.feature.spectral_rolloff(y=y, sr=sr, hop_length=hop_length, n_fft=n_fft)[0]
+        zero_crossing_rate = librosa.feature.zero_crossing_rate(y, hop_length=hop_length)[0]
+        rms = librosa.feature.rms(y=y, hop_length=hop_length)[0]
         
         feature_stats = {
             'file_path': file_path,
@@ -128,9 +135,14 @@ def extract_single_features(y, sr, file_path, augmented=False):
         return None
 
 class AudioPreprocessor:
-    def __init__(self, model_dir='../models'):
+    def __init__(self, model_dir=None):
         """Initialize the preprocessor with model directory path."""
-        self.model_dir = model_dir
+        if model_dir is None:
+            # Use absolute path relative to this file
+            project_root = Path(__file__).parent.parent
+            self.model_dir = str(project_root / 'models')
+        else:
+            self.model_dir = model_dir
         self.scaler = None
         self._load_scaler()
 
@@ -149,18 +161,22 @@ class AudioPreprocessor:
 
     def preprocess_audio(self, audio_file, augment=False):
         """Preprocess a single audio file."""
-        features_list = extract_features(audio_file, augment)
-        if not features_list:
-            return None
-        
-        # Convert features to array format
-        feature_arrays = []
-        for features in features_list:
+        try:
+            # For prediction, we don't need augmentation
+            features_list = extract_features(audio_file, augment=augment)
+            if not features_list:
+                return None
+            
+            # Convert features to array format (take only the first feature set for prediction)
+            features = features_list[0]  # Use first (original) features only for prediction
             feature_dict = {k: v for k, v in features.items() 
                           if k not in ['file_path', 'label', 'augmented']}
-            feature_arrays.append(list(feature_dict.values()))
-        
-        return np.array(feature_arrays)
+            feature_array = np.array([list(feature_dict.values())])
+            
+            return feature_array
+        except Exception as e:
+            print(f"Error preprocessing audio: {e}")
+            return None
 
     def fit_transform(self, X):
         """Fit the scaler and transform the data."""
