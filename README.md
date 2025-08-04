@@ -2,7 +2,7 @@
 
 A machine learning system for detecting anomalies in industrial pump sounds using audio analysis and Random Forest classification. The system includes a FastAPI backend service for predictions and model management, and a Streamlit dashboard for visualization and monitoring.
 
-🚀 **Live Demo**: [https://pump-anomaly-dashboard.onrender.com/](https://pump-anomaly-dashboard.onrender.com/)
+🚀 **Live Demo**: [https://pumpanomalydetection-thbbg7wkagyvazltlistwj.streamlit.app/](https://pumpanomalydetection-thbbg7wkagyvazltlistwj.streamlit.app/)
 
 📺 **Video Demo**: [Watch on YouTube](https://youtu.be/uvTL3bx2eiA)
 
@@ -259,7 +259,7 @@ The preprocessing pipeline extracts 73 features from each 10-second audio record
    - **Dashboard Service**: Streamlit frontend on port 8501
 
 5. **Live Production Deployment**: 
-   - Dashboard: [https://pump-anomaly-dashboard.onrender.com/](https://pump-anomaly-dashboard.onrender.com/)
+   - Dashboard: [https://pumpanomalydetection-thbbg7wkagyvazltlistwj.streamlit.app/](https://pumpanomalydetection-thbbg7wkagyvazltlistwj.streamlit.app/)
    - API Documentation: Available through the dashboard interface
 
 ## Security & Authentication
