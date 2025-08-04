@@ -647,6 +647,15 @@ elif page == "Predictions":
         with open(temp_path, "wb") as f:
             f.write(uploaded_file.getbuffer())
         
+        # If using S3, upload temp file to S3 for API access (optional, if API expects S3 path)
+        s3_temp_path = None
+        if STORAGE_TYPE == 's3' and s3_client and S3_BUCKET:
+            s3_temp_path = f"temp/{os.path.basename(temp_path)}"
+            try:
+                s3_client.upload_file(temp_path, S3_BUCKET, s3_temp_path)
+            except Exception as e:
+                st.warning(f"Could not upload temp file to S3: {str(e)}")
+        
         # Display audio visualizations
         st.subheader("Audio Visualization")
         vis_fig = visualize_audio(temp_path, "Uploaded Audio")
@@ -654,11 +663,18 @@ elif page == "Predictions":
         
         # Make prediction
         try:
-            with open(temp_path, 'rb') as file_handle:
-                files = {'file': ('audio.wav', file_handle.read(), 'audio/wav')}
-                st.info("📊 Processing audio... This may take up to 2 minutes for larger or complex audio files.")
+            if STORAGE_TYPE == 's3' and s3_temp_path:
+                # If API supports S3 path, send S3 path instead of file
+                json_data = {'s3_path': s3_temp_path}
+                st.info("📊 Processing audio from S3... This may take up to 2 minutes for larger or complex audio files.")
                 with st.spinner("Analyzing audio patterns... Please wait."):
-                    prediction = call_api('post', '/predict/', files=files, timeout=120)  # Use a very long timeout (2 minutes) for audio processing
+                    prediction = call_api('post', '/predict/', json_data=json_data, timeout=120)
+            else:
+                with open(temp_path, 'rb') as file_handle:
+                    files = {'file': ('audio.wav', file_handle.read(), 'audio/wav')}
+                    st.info("📊 Processing audio... This may take up to 2 minutes for larger or complex audio files.")
+                    with st.spinner("Analyzing audio patterns... Please wait."):
+                        prediction = call_api('post', '/predict/', files=files, timeout=120)
             
             if prediction:
                 # Display prediction
@@ -675,6 +691,12 @@ elif page == "Predictions":
                 time.sleep(0.1)
                 if os.path.exists(temp_path):
                     os.remove(temp_path)
+                # Optionally remove temp file from S3
+                if STORAGE_TYPE == 's3' and s3_client and s3_temp_path:
+                    try:
+                        s3_client.delete_object(Bucket=S3_BUCKET, Key=s3_temp_path)
+                    except Exception:
+                        pass
             except Exception as e:
                 st.warning(f"Could not remove temporary file: {str(e)}")
 
@@ -752,20 +774,47 @@ elif page == "Training":
                 progress_bar.progress(current_step / total_steps)
                 
                 files = []
+                s3_paths = []
+                # Save files locally or upload to S3
                 for file in normal_files:
                     name = file.name if 'normal' in file.name.lower() else f'normal_{file.name}'
-                    files.append(('files', (name, file.getvalue(), 'audio/wav')))
+                    if STORAGE_TYPE == 's3' and s3_client and S3_BUCKET:
+                        s3_key = f"training/normal/{name}"
+                        try:
+                            # Save to temp then upload to S3
+                            temp_file = f"/tmp/{name}"
+                            with open(temp_file, "wb") as f:
+                                f.write(file.getbuffer())
+                            s3_client.upload_file(temp_file, S3_BUCKET, s3_key)
+                            s3_paths.append({'label': 0, 's3_path': s3_key})
+                            os.remove(temp_file)
+                        except Exception as e:
+                            st.warning(f"Could not upload {name} to S3: {str(e)}")
+                    else:
+                        files.append(('files', (name, file.getvalue(), 'audio/wav')))
                 
                 for file in abnormal_files:
                     name = file.name if 'abnormal' in file.name.lower() else f'abnormal_{file.name}'
-                    files.append(('files', (name, file.getvalue(), 'audio/wav')))
+                    if STORAGE_TYPE == 's3' and s3_client and S3_BUCKET:
+                        s3_key = f"training/abnormal/{name}"
+                        try:
+                            temp_file = f"/tmp/{name}"
+                            with open(temp_file, "wb") as f:
+                                f.write(file.getbuffer())
+                            s3_client.upload_file(temp_file, S3_BUCKET, s3_key)
+                            s3_paths.append({'label': 1, 's3_path': s3_key})
+                            os.remove(temp_file)
+                        except Exception as e:
+                            st.warning(f"Could not upload {name} to S3: {str(e)}")
+                    else:
+                        files.append(('files', (name, file.getvalue(), 'audio/wav')))
                 
                 current_step += 1
                 progress_bar.progress(current_step / total_steps)
                 
                 # Step 2: Feature Extraction
                 status_text.markdown("📊 Extracting audio features...")
-                time.sleep(0.5)  # Add small delay to show progress
+                time.sleep(0.5)
                 current_step += 1
                 progress_bar.progress(current_step / total_steps)
                 
@@ -775,7 +824,12 @@ elif page == "Training":
                 current_step += 1
                 progress_bar.progress(current_step / total_steps)
                 
-                result = call_api('post', '/retrain/', files=files, timeout=300)  # Very long timeout (5 minutes) for model training
+                if STORAGE_TYPE == 's3' and s3_paths:
+                    # Send S3 paths to API
+                    json_data = {'s3_files': s3_paths}
+                    result = call_api('post', '/retrain/', json_data=json_data, timeout=300)
+                else:
+                    result = call_api('post', '/retrain/', files=files, timeout=300)
                 
                 if result:
                     # Step 4: Model Evaluation
@@ -794,7 +848,6 @@ elif page == "Training":
                             st.subheader("New Model Performance")
                             metrics_df = pd.DataFrame(result['performance']).transpose()
                             
-                            # Replace numeric labels with descriptive ones
                             metrics_df.rename(index={
                                 '0': 'Normal',
                                 '1': 'Abnormal',
@@ -803,7 +856,6 @@ elif page == "Training":
                                 'weighted avg': 'Weighted Avg'
                             }, inplace=True)
                         
-                        # Round numeric values to 3 decimal places
                         numeric_columns = ['precision', 'recall', 'f1-score', 'support']
                         metrics_df[numeric_columns] = metrics_df[numeric_columns].round(3)
                         
@@ -826,51 +878,87 @@ elif page == "Training":
 
     # Display training history
     st.subheader("Training History")
-    models_dir = Path(project_root) / 'models'
-    if models_dir.exists():
-        models = [f.name for f in models_dir.glob('random_forest_model*.pkl')]
-        if models:
-            model_info = []
-            for m in models:
-                try:
-                    # Handle both old and new format filenames
-                    if '_v' in m:
-                        version = m.split('_v')[-1].split('_')[0]
-                        timestamp_str = m.split('_')[-1].split('.')[0]
-                    else:
-                        version = '1'  # Default version for old format
-                        timestamp_str = str(int(time.time()))  # Use current timestamp
-                    
-                    # Get file modification time as backup
-                    mod_time = datetime.fromtimestamp(os.path.getmtime(os.path.join(models_dir, m)))
-                    
+    if STORAGE_TYPE == 's3' and s3_client and S3_BUCKET:
+        # List model files in S3 bucket
+        try:
+            response = s3_client.list_objects_v2(Bucket=S3_BUCKET, Prefix='models/')
+            models = []
+            if 'Contents' in response:
+                for obj in response['Contents']:
+                    filename = os.path.basename(obj['Key'])
+                    if filename.startswith('random_forest_model') and filename.endswith('.pkl'):
+                        models.append({'Key': obj['Key'], 'Filename': filename, 'LastModified': obj['LastModified']})
+            if models:
+                model_info = []
+                for m in models:
                     try:
-                        # Try parsing the timestamp from filename
-                        timestamp = datetime.strptime(timestamp_str, '%Y%m%d_%H%M%S')
-                    except ValueError:
-                        # If parsing fails, use file modification time
-                        timestamp = mod_time
-                    
-                    model_info.append({
-                        'Version': version,
-                        'Timestamp': timestamp,
-                        'Filename': m
-                    })
-                except Exception as e:
-                    st.warning(f"Error processing model file {m}: {str(e)}")
-            
-            if model_info:
-                models_df = pd.DataFrame(model_info)
-                models_df = models_df.sort_values('Timestamp', ascending=False)
-                
-                # Format timestamp for display
-                models_df['Timestamp'] = models_df['Timestamp'].dt.strftime('%Y-%m-%d %H:%M:%S')
-                
-                st.dataframe(
-                    models_df[['Version', 'Timestamp', 'Filename']],
-                    use_container_width=True
-                )
+                        if '_v' in m['Filename']:
+                            version = m['Filename'].split('_v')[-1].split('_')[0]
+                            timestamp_str = m['Filename'].split('_')[-1].split('.')[0]
+                        else:
+                            version = '1'
+                            timestamp_str = m['LastModified'].strftime('%Y%m%d_%H%M%S')
+                        mod_time = m['LastModified']
+                        try:
+                            timestamp = datetime.strptime(timestamp_str, '%Y%m%d_%H%M%S')
+                        except ValueError:
+                            timestamp = mod_time
+                        model_info.append({
+                            'Version': version,
+                            'Timestamp': timestamp,
+                            'Filename': m['Filename']
+                        })
+                    except Exception as e:
+                        st.warning(f"Error processing model file {m['Filename']}: {str(e)}")
+                if model_info:
+                    models_df = pd.DataFrame(model_info)
+                    models_df = models_df.sort_values('Timestamp', ascending=False)
+                    models_df['Timestamp'] = models_df['Timestamp'].dt.strftime('%Y-%m-%d %H:%M:%S')
+                    st.dataframe(
+                        models_df[['Version', 'Timestamp', 'Filename']],
+                        use_container_width=True
+                    )
+                else:
+                    st.info("No valid model files found in S3")
             else:
-                st.info("No valid model files found")
-        else:
-            st.info("No training history available")
+                st.info("No training history available in S3")
+        except Exception as e:
+            st.warning(f"Could not list models in S3: {str(e)}")
+    else:
+        models_dir = Path(project_root) / 'models'
+        if models_dir.exists():
+            models = [f.name for f in models_dir.glob('random_forest_model*.pkl')]
+            if models:
+                model_info = []
+                for m in models:
+                    try:
+                        if '_v' in m:
+                            version = m.split('_v')[-1].split('_')[0]
+                            timestamp_str = m.split('_')[-1].split('.')[0]
+                        else:
+                            version = '1'
+                            timestamp_str = str(int(time.time()))
+                        mod_time = datetime.fromtimestamp(os.path.getmtime(os.path.join(models_dir, m)))
+                        try:
+                            timestamp = datetime.strptime(timestamp_str, '%Y%m%d_%H%M%S')
+                        except ValueError:
+                            timestamp = mod_time
+                        model_info.append({
+                            'Version': version,
+                            'Timestamp': timestamp,
+                            'Filename': m
+                        })
+                    except Exception as e:
+                        st.warning(f"Error processing model file {m}: {str(e)}")
+                if model_info:
+                    models_df = pd.DataFrame(model_info)
+                    models_df = models_df.sort_values('Timestamp', ascending=False)
+                    models_df['Timestamp'] = models_df['Timestamp'].dt.strftime('%Y-%m-%d %H:%M:%S')
+                    st.dataframe(
+                        models_df[['Version', 'Timestamp', 'Filename']],
+                        use_container_width=True
+                    )
+                else:
+                    st.info("No valid model files found")
+            else:
+                st.info("No training history available")
