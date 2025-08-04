@@ -4,6 +4,12 @@ A machine learning system for detecting anomalies in industrial pump sounds usin
 
 🚀 **Live Demo**: [https://pump-anomaly-dashboard.onrender.com/](https://pump-anomaly-dashboard.onrender.com/)
 
+📺 **Video Demo**: [Watch on YouTube](https://youtu.be/uvTL3bx2eiA)
+
+## Overview
+
+This project implements an industrial pump anomaly detection system using machine learning and audio analysis. The system processes pump sound recordings to identify abnormal operations that might indicate mechanical issues or failures. It provides both API endpoints for integration and a user-friendly dashboard for monitoring and analysis.
+
 ## Dataset
 
 This project uses the **MIMII Dataset: Sound Dataset for Malfunctioning Industrial Machine Investigation and Inspection**. The MIMII dataset contains sound recordings of industrial machines (pumps, fans, valves, and slide rails) under normal and abnormal operating conditions.
@@ -113,6 +119,14 @@ The project utilizes audio recordings from 4 different industrial water pumps (I
 - **Abnormal Operation**: Various fault conditions including bearing defects, impeller issues, and other mechanical problems
 
 The preprocessing pipeline extracts 73 features from each 10-second audio recording, creating a comprehensive feature set for machine learning classification. Due to GitHub's file size limitations, only the processed feature files are included in this repository.
+
+
+## Model Evaluation Metrics
+- Accuracy
+- Precision
+- Recall
+- F1-Score
+- Confusion Matrix
 
 ## API Endpoints
 
@@ -264,6 +278,66 @@ The preprocessing pipeline extracts 73 features from each 10-second audio record
 - **Model Version Control**: Automatic versioning and backup of trained models
 - **Health Monitoring**: Service health checks and uptime tracking
 - **Error Tracking**: Comprehensive error logging with stack traces
+
+
+## Load Testing Results
+
+I performed load testing on the Pump Anomaly Detection API using Locust to simulate user traffic and assess performance under stress.
+
+**Test Configuration:**
+- **API Host:** `https://pump-anomaly-api.onrender.com`
+- **API Key:** Configured
+- **Test Data Paths:**
+   - Normal audio: `data/test/normal`
+   - Abnormal audio: `data/test/abnormal`
+
+### Summary of Results
+
+- **High Failure Rates:** Out of 644 requests, 458 failed (71% failure rate). Several endpoints had a 100% failure rate.
+- **Slow Response Times:** Median response time was 8,300 ms; 95th percentile reached 81,000 ms; maximum exceeded 200 seconds.
+- **Endpoint Performance:**
+   - **Health Check (GET):** 12.3% failure rate, median response 8,300 ms, 95th percentile 163,000 ms.
+   - **Model Evaluation (GET), Model Info (GET), Predict normal (POST), Prediction (normal) (POST):** 100% failure rate under load.
+
+### Detailed Metrics
+
+| Type | Endpoint | # Requests | # Fails | Median (ms) | 95%ile (ms) | 99%ile (ms) | Avg (ms) | Min (ms) | Max (ms) | Avg Size (bytes) | RPS | Failures/s |
+|------|----------|------------|---------|-------------|-------------|-------------|----------|----------|----------|------------------|-----|------------|
+| GET  | Health Check | 212 | 26 | 8,300 | 163,000 | 200,000 | 21,256 | 832 | 201,700 | 103.53 | 2.1 | 0.7 |
+| GET  | Model Evaluation | 106 | 106 | 7,700 | 200,000 | 202,000 | 29,537 | 0 | 201,851 | 19.55 | 1.6 | 1.6 |
+| GET  | Model Info | 112 | 112 | 5,300 | 42,000 | 199,000 | 16,772 | 0 | 200,435 | 24.5 | 1.4 | 1.4 |
+| POST | Predict normal | 76 | 76 | 25,000 | 72,000 | 82,000 | 28,847 | 4,551 | 82,068 | 53.07 | 0.3 | 0.3 |
+| POST | Prediction (normal) | 138 | 138 | 6,900 | 66,000 | 81,000 | 15,922 | 0 | 82,279 | 29.22 | 1.1 | 1.1 |
+| **Aggregated** | | 644 | 458 | 8,300 | 81,000 | 201,000 | 21,592 | 0 | 201,851 | 54.08 | 6.5 | 5.1 |
+
+### Visual Analysis
+
+#### Requests per Second
+![Requests per Second](data/images/total_requests_per_second_1754280276.81.png)
+
+#### Number of Users
+![Number of Users](data/images/number_of_users_1754280276.883.png)
+
+#### Response Times (ms)
+![Response Times (ms)](data/images/response_times_(ms)_1754280276.855.png)
+
+- **Requests per Second:** RPS peaked at 6/s, failures at 4/s, with instability at peak loads.
+- **Response Times:** 95th percentile spiked to 200,000 ms, indicating severe latency.
+- **User Count:** Stabilized at ~200 users, correlating with performance degradation.
+
+### Key Insights
+
+- **Scalability Issues:** API cannot handle 200 concurrent users; high failure and latency.
+- **Critical Endpoint Failures:** "Model Evaluation," "Model Info," "Predict normal," and "Prediction (normal)" endpoints failed 100% under load.
+- **Health Check Limitations:** Some success, but high response times persist.
+
+### Recommendations
+
+- **Diagnose Failures:** Investigate root causes for endpoint failures (server overload, resource limits, bugs).
+- **Reduce Latency:** Optimize backend logic, database queries, and server resources.
+- **Enhance Scalability:** Consider horizontal/vertical scaling.
+- **Iterative Testing:** Continue load testing with varied user counts to determine capacity and guide improvements.
+
 
 ## Future Improvements
 
