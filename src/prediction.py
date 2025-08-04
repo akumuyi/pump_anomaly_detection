@@ -42,6 +42,27 @@ except Exception as e:
     api_logger.error(f"Error during initialization: {str(e)}")
     raise
 
+@app.get("/health/", include_in_schema=True)
+async def health_check():
+    """
+    Health check endpoint to verify API is online.
+    
+    Returns:
+        Status of the API service
+    """
+    api_logger.info("Health check request received")
+    
+    model_status = "loaded" if hasattr(model, 'model') and model.model is not None else "not_loaded"
+    scaler_status = "fitted" if hasattr(preprocessor, 'scaler') and preprocessor.scaler is not None else "not_fitted"
+    
+    return {
+        "status": "healthy",
+        "api_version": app.version,
+        "model_status": model_status,
+        "scaler_status": scaler_status,
+        "environment": config.ENVIRONMENT
+    }
+
 @app.post("/predict/")
 async def predict(file: UploadFile = File(...), api_key: str = Depends(verify_api_key)):
     api_logger.info(f"Prediction request received: {file.filename}")
@@ -229,9 +250,9 @@ async def get_model_info(api_key: str = Depends(verify_api_key)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/health/")
-async def health_check():
-    """Health check endpoint."""
+@app.get("/health/detailed/")
+async def health_check_detailed():
+    """Detailed health check endpoint."""
     try:
         model_status = "loaded" if hasattr(model, 'model') and model.model is not None else "not loaded"
         scaler_status = "fitted" if preprocessor.scaler is not None else "not fitted"

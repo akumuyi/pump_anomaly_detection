@@ -7,6 +7,8 @@ from datetime import datetime, timedelta
 import os
 import time
 import requests
+from functools import wraps
+from requests.exceptions import RequestException, ConnectionError, Timeout
 import json
 import sys
 from pathlib import Path
@@ -35,10 +37,167 @@ import boto3
 model = PumpAnomalyDetector()
 preprocessor = AudioPreprocessor()
 
-# FastAPI endpoint
-API_URL = os.environ.get('API_URL', 'http://localhost:8000')
+# FastAPI endpoint configuration
+ENVIRONMENT = os.environ.get('ENVIRONMENT', config.ENVIRONMENT)
+DEFAULT_API_URL = 'https://pump-anomaly-api.onrender.com' if ENVIRONMENT == 'production' else 'http://localhost:8000'
+API_URL = os.environ.get('API_URL', config.API_URL or DEFAULT_API_URL)
 API_KEY = os.environ.get('API_KEY', config.API_KEY)  # Get from config if not in env
-HEADERS = {"X-API-Key": API_KEY} if API_KEY else {}
+
+# Setup API authentication headers - FastAPI expects the API key in either:
+# 1. Header named 'X-API-Key' (custom header)
+# 2. Query parameter named 'api_key'
+# 3. Header named 'Authorization' with "Bearer {token}"
+# We'll use all three for maximum compatibility
+HEADERS = {}
+if API_KEY:
+    HEADERS["X-API-Key"] = API_KEY
+    HEADERS["Authorization"] = f"Bearer {API_KEY}"
+
+# API calling utility function with retries and error handling
+def call_api(method, endpoint, files=None, json_data=None, max_retries=3, timeout=None):
+    """
+    Call API with retry logic and error handling.
+    
+    Args:
+        method (str): 'get' or 'post'
+        endpoint (str): API endpoint (without base URL)
+        files (dict, optional): Files for POST request
+        json_data (dict, optional): JSON data for POST request
+        max_retries (int): Maximum number of retry attempts
+        timeout (int, optional): Request timeout in seconds. If None, uses endpoint-appropriate defaults.
+        
+    Returns:
+        dict or None: JSON response or None if request failed
+    """
+    # Ensure API key is sent both in headers and as a query parameter for maximum compatibility
+    url = f"{API_URL}/{endpoint.lstrip('/')}"
+    params = {}
+    if API_KEY:
+        params['api_key'] = API_KEY
+    
+    # Set appropriate timeouts based on endpoint if none specified
+    if timeout is None:
+        if 'predict' in endpoint:
+            # Audio processing takes longer, especially for larger files
+            timeout = 60  # 60 seconds for prediction endpoints
+        elif 'retrain' in endpoint:
+            # Training can take a very long time
+            timeout = 300  # 5 minutes for retraining
+        elif 'evaluate' in endpoint:
+            # Model evaluation involves processing test datasets
+            timeout = 60  # 60 seconds for evaluation
+        else:
+            # Default for simpler endpoints
+            timeout = 15  # 15 seconds for other endpoints
+    
+    retry_delay = 1  # seconds
+    
+    for attempt in range(max_retries):
+        try:
+            if method.lower() == 'get':
+                response = requests.get(url, headers=HEADERS, params=params, timeout=timeout)
+            elif method.lower() == 'post':
+                response = requests.post(url, headers=HEADERS, params=params, files=files, json=json_data, timeout=timeout)
+            else:
+                raise ValueError(f"Unsupported method: {method}")
+            
+            response.raise_for_status()
+            return response.json()
+        
+        except ConnectionError:
+            if attempt < max_retries - 1:
+                st.warning(f"⚠️ Connection failed (attempt {attempt+1}/{max_retries}). Retrying in {retry_delay}s...")
+                time.sleep(retry_delay)
+                # Use longer retry delay for prediction endpoints
+                if 'predict' in endpoint or 'retrain' in endpoint:
+                    retry_delay *= 3  # More aggressive exponential backoff for compute-heavy operations
+                else:
+                    retry_delay *= 2  # Standard exponential backoff
+            else:
+                if ENVIRONMENT != "production":
+                    st.error(f"🌐 Connection Error: Cannot reach API at {API_URL}. Is the server running?")
+                else:
+                    st.error(f"🌐 Connection Error: Cannot reach API service. Please try again later.")
+                return None
+                
+        except Timeout:
+            if attempt < max_retries - 1:
+                # Add more information about timeouts for prediction endpoints
+                if 'predict' in endpoint:
+                    st.warning(f"⚠️ Prediction request timed out (attempt {attempt+1}/{max_retries}). Audio processing may take longer than expected. Retrying with longer timeout...")
+                    # Increase the timeout for the next attempt
+                    timeout *= 1.5
+                else:
+                    st.warning(f"⚠️ Request timed out (attempt {attempt+1}/{max_retries}). Retrying...")
+                time.sleep(retry_delay)
+                retry_delay *= 2
+            else:
+                if 'predict' in endpoint:
+                    st.error("⏱️ Prediction request timed out. The audio file may be too large or complex to process in the allowed time.")
+                else:
+                    st.error("⏱️ API Request timed out. The server might be experiencing heavy load.")
+                return None
+                
+        except RequestException as e:
+            if hasattr(e, 'response') and e.response is not None:
+                status_code = e.response.status_code
+                try:
+                    error_detail = e.response.json().get('detail', f"HTTP {status_code}")
+                except:
+                    error_detail = f"HTTP {status_code}"
+                
+                if status_code == 401:
+                    st.error("🔐 Authentication Error: Invalid API key")
+                elif status_code == 404:
+                    st.error("🔍 API endpoint not found. Please check the API URL.")
+                else:
+                    st.error(f"🚨 API Error: {error_detail}")
+            else:
+                st.error(f"🔧 Request Error: {str(e)}")
+            
+            if attempt < max_retries - 1:
+                time.sleep(retry_delay)
+                retry_delay *= 2
+            else:
+                return None
+        
+        except Exception as e:
+            st.error(f"🔧 Unexpected Error: {str(e)}")
+            if attempt < max_retries - 1:
+                time.sleep(retry_delay)
+                retry_delay *= 2
+            else:
+                return None
+    
+    return None
+
+# API Health Check function
+def check_api_health():
+    """
+    Check if the API is online and functioning properly.
+    
+    Returns:
+        dict or None: API health status information
+    """
+    try:
+        # Use a direct request with minimal timeout for health checks
+        url = f"{API_URL}/health/"
+        # Setup params for API key authentication
+        params = {}
+        if API_KEY:
+            params['api_key'] = API_KEY
+            
+        # Short timeout for health checks since they should be fast
+        response = requests.get(url, headers=HEADERS, params=params, timeout=5)
+        if response.status_code == 200:
+            return response.json()
+        return None
+    except requests.Timeout:
+        # Silently fail on timeout - we'll just show the API as offline
+        return None
+    except Exception:
+        # Silently fail on other exceptions too
+        return None
 
 # Storage configuration
 STORAGE_TYPE = os.environ.get('STORAGE_TYPE', 'local')
@@ -125,27 +284,23 @@ def plot_metrics_history():
         df['timestamp'] = pd.to_datetime(df['timestamp'])
     
     # Get latest metrics from API
-    try:
-        response = requests.get(f"{API_URL}/evaluate/", headers=HEADERS)
-        if response.status_code == 200:
-            latest_eval = response.json()
-            if 'classification_report' in latest_eval:
-                weighted_avg = latest_eval['classification_report']['weighted avg']
-                latest_metrics = {
-                    'timestamp': datetime.now(),
-                    'accuracy': latest_eval['classification_report']['accuracy'],
-                    'precision': weighted_avg['precision'],
-                    'recall': weighted_avg['recall'],
-                    'f1': weighted_avg['f1-score']
-                }
-                
-                # Append new metrics if they're different from the last entry
-                if len(df) == 0 or not df.iloc[-1][1:].equals(pd.Series(latest_metrics)[1:]):
-                    df = pd.concat([df, pd.DataFrame([latest_metrics])], ignore_index=True)
-                    # Save updated history
-                    df.to_csv(metrics_file, index=False)
-    except Exception as e:
-        st.warning(f"Could not update metrics history: {str(e)}")
+    latest_eval = call_api('get', '/evaluate/', max_retries=2)  # Use fewer retries here as it's non-critical
+    
+    if latest_eval and 'classification_report' in latest_eval:
+        weighted_avg = latest_eval['classification_report']['weighted avg']
+        latest_metrics = {
+            'timestamp': datetime.now(),
+            'accuracy': latest_eval['classification_report']['accuracy'],
+            'precision': weighted_avg['precision'],
+            'recall': weighted_avg['recall'],
+            'f1': weighted_avg['f1-score']
+        }
+        
+        # Append new metrics if they're different from the last entry
+        if len(df) == 0 or not df.iloc[-1][1:].equals(pd.Series(latest_metrics)[1:]):
+            df = pd.concat([df, pd.DataFrame([latest_metrics])], ignore_index=True)
+            # Save updated history
+            df.to_csv(metrics_file, index=False)
     
     if len(df) > 0:
         # Create line plot
@@ -202,6 +357,51 @@ st.title("Pump Anomaly Detection Dashboard")
 st.sidebar.title("Navigation")
 page = st.sidebar.radio("Go to", ["Model Monitoring", "Predictions", "Training"])
 
+# API configuration and status
+st.sidebar.markdown("### API Configuration")
+st.sidebar.text(f"Environment: {ENVIRONMENT}")
+st.sidebar.text(f"API URL: {API_URL}")
+
+# Show API key status but keep it secure
+if API_KEY:
+    masked_key = API_KEY[:4] + "*" * (len(API_KEY) - 4) if len(API_KEY) > 4 else "****"
+    st.sidebar.text(f"API Key: {masked_key}")
+    
+    # Add an expandable debug section for advanced users/admins
+    with st.sidebar.expander("🔧 Authentication Debug Info", expanded=False):
+        st.markdown("**Headers sent to API:**")
+        for key, value in HEADERS.items():
+            if key.lower() == "authorization":
+                st.code(f"{key}: Bearer ***")
+            elif key.lower() == "x-api-key":
+                st.code(f"{key}: ***")
+            else:
+                st.code(f"{key}: {value}")
+        st.markdown("**Also sending API key as:**")
+        st.code("api_key=*** (query parameter)")
+else:
+    st.sidebar.text("API Key: Not Set")
+    st.sidebar.warning("⚠️ API Key not configured. API calls will fail.")
+
+# Check API health
+health_status = check_api_health()
+if health_status:
+    st.sidebar.markdown("🟢 **API Status: Online**")
+    st.sidebar.markdown(f"🔄 Model: {health_status['model_status']}")
+    st.sidebar.markdown(f"📊 Scaler: {health_status['scaler_status']}")
+else:
+    st.sidebar.markdown("🔴 **API Status: Offline**")
+    st.sidebar.markdown("⚠️ Unable to connect to API service")
+    if ENVIRONMENT != "production":
+        st.sidebar.markdown("""
+        💡 **Troubleshooting Tips:**
+        1. Make sure the API server is running
+        2. Check that the API URL is correct
+        3. Verify network connectivity
+        """)
+    else:
+        st.sidebar.markdown("The API service may be experiencing issues. Please try again later.")
+
 if page == "Model Monitoring":
     st.header("Model Monitoring")
     
@@ -212,16 +412,10 @@ if page == "Model Monitoring":
         col1.metric("Model Uptime", f"{uptime.days} days {uptime.seconds//3600} hours")
     
     # Get model info
-    try:
-        response = requests.get(f"{API_URL}/model-info/", headers=HEADERS)
-        if response.status_code == 200:
-            model_info = response.json()
-            col2.metric("Model Type", model_info['model_type'])
-            col3.metric("Model Status", "Active" if model_info['is_trained'] else "Not Trained")
-        else:
-            st.error(f"API Error: {response.json().get('detail', 'Unknown error')}")
-    except Exception as e:
-        st.error(f"Could not connect to the API: {str(e)}")
+    model_info = call_api('get', '/model-info/')
+    if model_info:
+        col2.metric("Model Type", model_info['model_type'])
+        col3.metric("Model Status", "Active" if model_info['is_trained'] else "Not Trained")
     
     # Performance metrics over time
     st.subheader("Performance Metrics History")
@@ -230,11 +424,11 @@ if page == "Model Monitoring":
     
     # Latest evaluation metrics
     st.subheader("Latest Model Evaluation")
+    with st.spinner("Fetching evaluation metrics..."):
+        latest_eval = call_api('get', '/evaluate/', timeout=60)  # 60 second timeout for evaluation
+    
     try:
-        response = requests.get(f"{API_URL}/evaluate/", headers=HEADERS)
-        if response.status_code == 200:
-            latest_eval = response.json()
-            
+        if latest_eval:
             # Display classification report if available
             if 'classification_report' in latest_eval:
                 metrics_df = pd.DataFrame(latest_eval['classification_report']).transpose()
@@ -267,21 +461,8 @@ if page == "Model Monitoring":
                     ['Normal', 'Abnormal']
                 )
                 st.plotly_chart(cm_fig, use_container_width=True)
-        elif response.status_code == 400:
-            error_detail = response.json().get('detail', 'Unknown error')
-            if "Model not trained" in error_detail:
-                st.info("📋 Model evaluation will be available after the model is trained.")
-            elif "Test data not found" in error_detail:
-                st.warning("⚠️ Test data not found. Please ensure test_features.csv exists in the data directory.")
-            elif "scaler is not fitted" in error_detail:
-                st.warning("⚠️ Model scaler not fitted. Please retrain the model to enable evaluation.")
-            else:
-                st.warning(f"⚠️ Evaluation not available: {error_detail}")
-        elif response.status_code == 404:
-            st.warning("⚠️ Test data not found. Please ensure the test dataset is available.")
         else:
-            error_detail = response.json().get('detail', 'Unknown error') if response.content else 'Server error'
-            st.error(f"❌ API Error: {error_detail}")
+            st.info("📋 Model evaluation data could not be retrieved. This could be because the model is not trained yet, or there was an issue connecting to the API.")
     except requests.exceptions.RequestException as e:
         st.error(f"❌ Could not connect to the API: {str(e)}")
     except Exception as e:
@@ -467,17 +648,20 @@ elif page == "Predictions":
         try:
             with open(temp_path, 'rb') as file_handle:
                 files = {'file': ('audio.wav', file_handle.read(), 'audio/wav')}
-                response = requests.post(f"{API_URL}/predict/", files=files, headers=HEADERS)  # Removed timeout
+                st.info("📊 Processing audio... This may take up to 2 minutes for larger or complex audio files.")
+                with st.spinner("Analyzing audio patterns... Please wait."):
+                    prediction = call_api('post', '/predict/', files=files, timeout=120)  # Use a very long timeout (2 minutes) for audio processing
             
-            prediction = response.json()
-            
-            # Display prediction
-            col1, col2 = st.columns(2)
-            col1.metric("Prediction", prediction['prediction'].upper())
-            col2.metric("Confidence", f"{prediction['probability']:.2%}")
-            
+            if prediction:
+                # Display prediction
+                col1, col2 = st.columns(2)
+                col1.metric("Prediction", prediction['prediction'].upper())
+                col2.metric("Confidence", f"{prediction['probability']:.2%}")
+            else:
+                st.error("Could not get a prediction from the API")
+                
         except Exception as e:
-            st.error(f"Error making prediction: {str(e)}")
+            st.error(f"Error processing prediction: {str(e)}")
         finally:
             try:
                 time.sleep(0.1)
@@ -530,6 +714,10 @@ elif page == "Training":
         total_files = len(normal_files) + len(abnormal_files)
         st.write(f"Total files ready for training: {total_files}")
         
+        # Add warning for large dataset uploads
+        if total_files > 20:
+            st.warning(f"⚠️ You've uploaded {total_files} files. Training with a large number of audio files may take several minutes. Please be patient during processing.")
+        
         col1, col2 = st.columns([2, 1])
         with col1:
             train_button = st.button("Start Training", use_container_width=True)
@@ -574,20 +762,20 @@ elif page == "Training":
                 progress_bar.progress(current_step / total_steps)
                 
                 # Step 3: Model Training
-                status_text.markdown("🔄 Training model...")
+                status_text.markdown("🔄 Training model... This may take several minutes depending on dataset size.")
+                st.info("⏳ Model training is in progress. Please do not close this window or navigate away. For large datasets, this operation can take up to 5 minutes.")
                 current_step += 1
                 progress_bar.progress(current_step / total_steps)
                 
-                response = requests.post(f"{API_URL}/retrain/", files=files, headers=HEADERS)  # Removed timeout
-                result = response.json()
+                result = call_api('post', '/retrain/', files=files, timeout=300)  # Very long timeout (5 minutes) for model training
                 
-                if response.status_code == 200:
+                if result:
                     # Step 4: Model Evaluation
                     status_text.markdown("📈 Evaluating model performance...")
                     current_step += 1
                     progress_bar.progress(current_step / total_steps)
                     
-                    if isinstance(result['performance'], dict):
+                    if isinstance(result.get('performance', None), dict):
                         # Step 5: Finalizing
                         status_text.markdown("✅ Training completed successfully!")
                         current_step += 1
