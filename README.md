@@ -312,14 +312,8 @@ I performed load testing on the Pump Anomaly Detection API using Locust to simul
 
 ### Visual Analysis
 
-#### Requests per Second
-![Requests per Second](data/images/total_requests_per_second_1754280276.81.png)
-
-#### Number of Users
-![Number of Users](data/images/number_of_users_1754280276.883.png)
-
-#### Response Times (ms)
-![Response Times (ms)](data/images/response_times_(ms)_1754280276.855.png)
+#### Visualistion
+![Visualistion](data/images/total_requests_per_second_1754280276.81.png)
 
 - **Requests per Second:** RPS peaked at 6/s, failures at 4/s, with instability at peak loads.
 - **Response Times:** 95th percentile spiked to 200,000 ms, indicating severe latency.
