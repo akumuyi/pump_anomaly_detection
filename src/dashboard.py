@@ -583,12 +583,20 @@ if page == "Model Monitoring":
         Spectrograms visualize the frequency content of pump sounds over time. 
         Normal pumps show consistent patterns, while abnormal pumps exhibit irregular frequency spikes or disruptions.
         """)
-        
+
         # Select one normal and one abnormal audio file for comparison
-        normal_audio = str(Path(project_root) / 'data' / 'train' / 'normal' / 'normal_00000009.wav')
-        abnormal_audio = str(Path(project_root) / 'data' / 'train' / 'abnormal' / 'abnormal_00000024.wav')
-        
-        if Path(normal_audio).exists() and Path(abnormal_audio).exists():
+        if STORAGE_TYPE == 's3':
+            s3_normal_audio = 'data/train/normal/normal_00000009.wav'
+            s3_abnormal_audio = 'data/train/abnormal/abnormal_00000024.wav'
+            local_normal_audio = '/tmp/normal_00000009.wav'
+            local_abnormal_audio = '/tmp/abnormal_00000024.wav'
+            normal_audio = fetch_s3_file(s3_normal_audio, local_normal_audio)
+            abnormal_audio = fetch_s3_file(s3_abnormal_audio, local_abnormal_audio)
+        else:
+            normal_audio = str(Path(project_root) / 'data' / 'train' / 'normal' / 'normal_00000009.wav')
+            abnormal_audio = str(Path(project_root) / 'data' / 'train' / 'abnormal' / 'abnormal_00000024.wav')
+
+        if normal_audio and abnormal_audio and Path(normal_audio).exists() and Path(abnormal_audio).exists():
             col1, col2 = st.columns(2)
             with col1:
                 st.write("Normal Pump Spectrogram")
@@ -599,7 +607,7 @@ if page == "Model Monitoring":
                 fig_abnormal = visualize_audio(abnormal_audio, "Abnormal Pump")
                 st.pyplot(fig_abnormal)
         else:
-            st.warning("Sample audio files not found. Please ensure data paths are correct.")
+            st.warning("Sample audio files not found. Please ensure data paths are correct or S3 is configured.")
         
         # Feature Interpretation
         st.subheader("Feature Interpretation Summary")
